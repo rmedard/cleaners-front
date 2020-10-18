@@ -1,0 +1,45 @@
+<app-navigation-bar></app-navigation-bar>
+
+<div class="container">
+  <div class="row text-center">
+    <div class="col-md">
+      <h1>De quel service avez-vous besoin?</h1>
+      <p>Nos services sont dans deux catégories,</p>
+      <p>Veuillez choisir suivant la catégorie que vous souhaitez</p>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-6 border border-light pt-3 mb-3">
+      <div class="card bg-dark text-white mb-2">
+        <img class="card-img" src="assets/exterior.jpg" alt="Les Services Exterieurs">
+        <div class="card-img-overlay">
+          <h1 class="card-title text-center">Les Services Exterieurs</h1>
+        </div>
+      </div>
+      <div class="card mb-2" *ngFor="let service of exteriorServices">
+        <div class="card-body">
+          <h5 class="card-title text-capitalize">{{service.title}}</h5>
+          <p class="card-text">{{service.description | ellipsis:200}}</p>
+          <a [routerLink]="['/services/' + service.id]" class="btn btn-outline-primary">Commander</a>
+        </div>
+      </div>
+    </div>
+    <div class="col-6 border border-light pt-3 mb-3">
+      <div class="card bg-dark text-white mb-2">
+        <img class="card-img" src="assets/interior.jpg" alt="Les Services Interieurs">
+        <div class="card-img-overlay">
+          <h1 class="card-title text-center">Les Services Interieurs</h1>
+        </div>
+      </div>
+      <div class="card mb-2" *ngFor="let service of interiorServices">
+        <div class="card-body">
+          <h5 class="card-title text-capitalize">{{service.title}}</h5>
+          <p class="card-text">{{service.description | ellipsis:200}}</p>
+          <a [routerLink]="['/services/' + service.id]" class="btn btn-outline-primary">Commander</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-footer></app-footer>

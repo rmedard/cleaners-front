@@ -1,0 +1,64 @@
+<app-navigation-bar></app-navigation-bar>
+<div class="container">
+  <h1 class="text-center text-capitalize">{{service.title}}</h1>
+  <div>
+    {{service.description}}
+  </div>
+  <div *ngIf="expertises.length > 0">
+    <h2 class="text-center">Nos prestataires</h2>
+    <div class="card mb-3 text-dark bg-light">
+      <div class="card-body">
+        <form [formGroup]="filterForm">
+          <div class="form-group row">
+            <label for="idDateInput" class="col-2 col-form-label font-weight-bold">Date</label>
+            <div class="col-10">
+              <div class="input-group input-group-sm">
+                <input class="form-control" ngbDatepicker #datePicker="ngbDatepicker"
+                       formControlName="serviceDateField" placeholder="dd-mm-yyyy" id="idDateInput"
+                       [(ngModel)]="serviceDate">
+                <div class="input-group-append">
+                  <button class="btn btn-outline-secondary calendar" (click)="datePicker.toggle()"
+                          type="button">
+                    <fa-icon [icon]="calendarIcon"></fa-icon>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="timeRangeInput" class="col-2 col-form-label font-weight-bold">Durée</label>
+            <div class="col-10">
+              <ng5-slider [(value)]="startHour" [(highValue)]="endHour" [options]="options" id="timeRangeInput"></ng5-slider>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-6 mb-3" *ngFor="let expertise of expertises">
+        <div class="media border p-2">
+          <img *ngIf="expertise.professional.picture === ''" src="assets/unknown.png" alt=""
+               class="card-img-top rounded-circle" style="height: 100px; width: auto">
+          <img *ngIf="expertise.professional.picture" src="{{expertise.professional.picture}}" alt=""
+               class="card-img-top rounded-circle thumb-post">
+          <div class="media-body row">
+            <div class="col-8">
+              <div class="pl-3">
+                <h2>{{expertise.professional.lastName}}, {{expertise.professional.firstName}}</h2>
+                <p class="mb-0">{{expertise.professional.address.streetName.trim()}}
+                  , {{expertise.professional.address.plotNumber}}<br>
+                  {{expertise.professional.address.postalCode}} {{expertise.professional.address.city}}</p>
+              </div>
+            </div>
+            <div class="col-4 text-center d-flex flex-column justify-content-center">
+            <span class="badge badge-pill badge-light mb-2" style="font-size: 0.9em">{{expertise.hourlyRate}}€/Heure</span>
+              <a href="#" class="btn btn-outline-success btn-sm">Commander</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<app-footer></app-footer>
