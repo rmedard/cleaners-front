@@ -16,7 +16,8 @@
                 <div class="col-10">
                   <div class="input-group input-group-sm">
                     <input class="form-control" ngbDatepicker #datePicker="ngbDatepicker"
-                           formControlName="serviceDateField" id="idDateInput" [minDate]="getNgbMinSelectableDate()">
+                           formControlName="serviceDateField" id="idDateInput" [minDate]="getNgbMinSelectableDate()"
+                           (click)="datePicker.toggle()">
                     <div class="input-group-append">
                       <button class="btn btn-outline-secondary calendar" (click)="datePicker.toggle()"
                               type="button">
@@ -38,13 +39,18 @@
               <div class="btn-group btn-group-toggle btn-block btn-group-sm" ngbRadioGroup
                    formControlName="sorting" name="radioBasic">
                 <label ngbButtonLabel class="btn-outline-dark">
-                  <input ngbButton type="radio" value="desc"> Prix Décroissant <fa-icon [icon]="descIcon"></fa-icon>
+                  <input ngbButton type="radio" value="desc"> Prix Décroissant
+                  <fa-icon [icon]="descIcon"></fa-icon>
                 </label>
                 <label ngbButtonLabel class="btn-outline-dark">
-                  <input ngbButton type="radio" value="asc"> Prix Croissant <fa-icon [icon]="ascIcon"></fa-icon>
+                  <input ngbButton type="radio" value="asc"> Prix Croissant
+                  <fa-icon [icon]="ascIcon"></fa-icon>
                 </label>
               </div>
-              <button class="btn btn-sm btn-block btn-danger" type="submit"><fa-icon [icon]="searchIcon"></fa-icon> Chercher</button>
+              <button class="btn btn-sm btn-block btn-danger" type="submit">
+                <fa-icon [icon]="searchIcon"></fa-icon>
+                Chercher
+              </button>
             </div>
           </div>
         </form>
@@ -68,7 +74,8 @@
               </div>
             </div>
             <div class="col-4 text-center d-flex flex-column justify-content-center">
-            <span class="badge badge-pill badge-light mb-2" style="font-size: 0.9em">{{expertise.hourlyRate}}€/Heure</span>
+              <span class="badge badge-pill badge-light mb-2" style="font-size: 0.9em">{{expertise.hourlyRate}}
+                €/Heure</span>
               <a href="#" class="btn btn-outline-success btn-sm">Commander</a>
             </div>
           </div>
