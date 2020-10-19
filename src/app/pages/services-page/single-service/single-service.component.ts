@@ -13,6 +13,7 @@ import {ProfessionalsService} from '../../../+services/professionals.service';
 import {SimpleDateStringPipe} from '../../../+utils/simple-date-string.pipe';
 import {NgbDateStruct} from '@ng-bootstrap/ng-bootstrap';
 import * as moment from 'moment';
+import {environment} from '../../../../environments/environment';
 
 @Component({
   selector: 'app-single-service',
@@ -28,8 +29,8 @@ export class SingleServiceComponent implements OnInit {
   descIcon = faLongArrowAltDown;
   ascIcon = faLongArrowAltUp;
   searchIcon = faSearch;
-  startHour = 8;
-  endHour = 10;
+  startHour = environment.workingHoursMin;
+  endHour = environment.workingHoursMin + 2;
   options: Options = {};
   availableExpertises = {} as AvailableExpertiseSearchDto;
 
@@ -66,8 +67,8 @@ export class SingleServiceComponent implements OnInit {
     const today = new Date();
     today.setMinutes(0);
     today.setSeconds(0);
-    if (today.getHours() >= 17) {
-      return moment(today).add(1, 'd').hours(8).toDate();
+    if (today.getHours() >= environment.workingHoursMax - 1) {
+      return moment(today).add(1, 'd').hours(environment.workingHoursMin).toDate();
     }
     return moment(today).add(1, 'h').toDate();
   }
@@ -94,7 +95,7 @@ export class SingleServiceComponent implements OnInit {
   getSliderOptions(): Options {
     return {
       floor: this.getMinSelectableDate().getHours(),
-      ceil: 18,
+      ceil: environment.workingHoursMax,
       minRange: 1,
       showTicks: true,
       getPointerColor: (): string => {

@@ -5,7 +5,8 @@
 export const environment = {
   production: false,
   apiUrl: 'https://cleanersapptfe.azurewebsites.net/api',
-  appEmail: 'rmedard5@gmail.com'
+  workingHoursMin: 8,
+  workingHoursMax: 18
 };
 
 /*
