@@ -14,8 +14,7 @@
             <div class="col-10">
               <div class="input-group input-group-sm">
                 <input class="form-control" ngbDatepicker #datePicker="ngbDatepicker"
-                       formControlName="serviceDateField" placeholder="dd-mm-yyyy" id="idDateInput"
-                       [(ngModel)]="serviceDate">
+                       formControlName="serviceDateField" id="idDateInput">
                 <div class="input-group-append">
                   <button class="btn btn-outline-secondary calendar" (click)="datePicker.toggle()"
                           type="button">
@@ -28,7 +27,8 @@
           <div class="form-group row">
             <label for="timeRangeInput" class="col-2 col-form-label font-weight-bold">Durée</label>
             <div class="col-10">
-              <ng5-slider [(value)]="startHour" [(highValue)]="endHour" [options]="options" id="timeRangeInput"></ng5-slider>
+              <ng5-slider formControlName="serviceHourRange"
+                          [options]="options" id="timeRangeInput"></ng5-slider>
             </div>
           </div>
         </form>

@@ -2,12 +2,14 @@ import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {Service} from '../../../+models/service';
 import {Expertise} from '../../../+models/expertise';
-import {FormBuilder, FormGroup} from '@angular/forms';
+import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {faCalendarAlt} from '@fortawesome/free-solid-svg-icons';
-import {LabelType, Options, PointerType} from 'ng5-slider';
+import {LabelType, Options} from 'ng5-slider';
 import {GetAvailableExpertises} from '../../../+models/dto/get-available-expertises';
 import {ProfessionalsService} from '../../../+services/professionals.service';
 import {SimpleDateStringPipe} from '../../../+utils/simple-date-string.pipe';
+import {NgbDateStruct} from '@ng-bootstrap/ng-bootstrap';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-single-service',
@@ -20,12 +22,12 @@ export class SingleServiceComponent implements OnInit {
   expertises: Expertise[] = [];
   filterForm: FormGroup;
   calendarIcon = faCalendarAlt;
-  startHour = 8;
-  endHour = 18;
+  startHour = 9;
+  endHour = 10;
   serviceDate: Date;
   options: Options = {
     floor: 8, ceil: 18, minRange: 1, showTicks: true,
-    getPointerColor: (value: number, pointer: PointerType): string => {
+    getPointerColor: (): string => {
       return '#212529';
     },
     getSelectionBarColor: (): string => {
@@ -51,12 +53,19 @@ export class SingleServiceComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.serviceDate = new Date();
+
+    const today = new Date();
+    this.serviceDate = today.getHours() >= 17 ? moment(today).add(1, 'd').toDate() : new Date();
     this.serviceDate.setMinutes(0);
     this.serviceDate.setSeconds(0);
 
     this.filterForm = this.formBuilder.group({
-      serviceDateField: [this.serviceDate]
+      serviceDateField: [{
+        year: this.serviceDate.getFullYear(),
+        month: this.serviceDate.getMonth() + 1,
+        day: this.serviceDate.getDate()
+      } as NgbDateStruct],
+      serviceHourRange: new FormControl([this.startHour, this.endHour])
     });
 
     this.route.data.subscribe(data => {
@@ -64,7 +73,6 @@ export class SingleServiceComponent implements OnInit {
       this.availableExpertises.serviceId = this.service.id;
       this.availableExpertises.dateTime = this.dateFormatter.transform(this.serviceDate);
       this.availableExpertises.duration = this.endHour - this.startHour;
-      console.log(this.availableExpertises);
       this.professionalsService.getAvailableProfessionals(this.availableExpertises).subscribe(expertises => {
         this.expertises = expertises;
       });
