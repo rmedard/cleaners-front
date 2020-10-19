@@ -5,8 +5,8 @@
 export const environment = {
   production: false,
   apiUrl: 'https://cleanersapptfe.azurewebsites.net/api',
-  workingHoursMin: 8,
-  workingHoursMax: 18
+  workingHourMin: 8,
+  workingHourMax: 18
 };
 
 /*

@@ -29,8 +29,8 @@ export class SingleServiceComponent implements OnInit {
   descIcon = faLongArrowAltDown;
   ascIcon = faLongArrowAltUp;
   searchIcon = faSearch;
-  startHour = environment.workingHoursMin;
-  endHour = environment.workingHoursMin + 2;
+  startHour = environment.workingHourMin;
+  endHour = environment.workingHourMin + 2;
   options: Options = {};
   availableExpertises = {} as AvailableExpertiseSearchDto;
 
@@ -41,7 +41,7 @@ export class SingleServiceComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.options = this.getSliderOptions();
+    this.options = this.sliderOptions();
     this.filterForm = this.formBuilder.group({
       serviceDateField: [this.getNgbMinSelectableDate(), Validators.required],
       serviceHourRange: new FormControl([this.startHour, this.endHour], Validators.required),
@@ -67,8 +67,8 @@ export class SingleServiceComponent implements OnInit {
     const today = new Date();
     today.setMinutes(0);
     today.setSeconds(0);
-    if (today.getHours() >= environment.workingHoursMax - 1) {
-      return moment(today).add(1, 'd').hours(environment.workingHoursMin).toDate();
+    if (today.getHours() >= environment.workingHourMax - 1) {
+      return moment(today).add(1, 'd').hours(environment.workingHourMin).toDate();
     }
     return moment(today).add(1, 'h').toDate();
   }
@@ -92,10 +92,10 @@ export class SingleServiceComponent implements OnInit {
     });
   }
 
-  getSliderOptions(): Options {
+  private sliderOptions(): Options {
     return {
       floor: this.getMinSelectableDate().getHours(),
-      ceil: environment.workingHoursMax,
+      ceil: environment.workingHourMax,
       minRange: 1,
       showTicks: true,
       getPointerColor: (): string => {
