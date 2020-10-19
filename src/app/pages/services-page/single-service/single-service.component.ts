@@ -3,7 +3,7 @@ import {ActivatedRoute} from '@angular/router';
 import {Service} from '../../../+models/service';
 import {Expertise} from '../../../+models/expertise';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
-import {faCalendarAlt} from '@fortawesome/free-solid-svg-icons';
+import {faCalendarAlt, faLongArrowAltDown, faLongArrowAltUp, faSearch} from '@fortawesome/free-solid-svg-icons';
 import {LabelType, Options} from 'ng5-slider';
 import {GetAvailableExpertises} from '../../../+models/dto/get-available-expertises';
 import {ProfessionalsService} from '../../../+services/professionals.service';
@@ -22,9 +22,11 @@ export class SingleServiceComponent implements OnInit {
   expertises: Expertise[] = [];
   filterForm: FormGroup;
   calendarIcon = faCalendarAlt;
+  descIcon = faLongArrowAltDown;
+  ascIcon = faLongArrowAltUp;
+  searchIcon = faSearch;
   startHour = 9;
   endHour = 10;
-  serviceDate: Date;
   options: Options = {
     floor: 8, ceil: 18, minRange: 1, showTicks: true,
     getPointerColor: (): string => {
@@ -54,29 +56,62 @@ export class SingleServiceComponent implements OnInit {
 
   ngOnInit(): void {
 
-    const today = new Date();
-    this.serviceDate = today.getHours() >= 17 ? moment(today).add(1, 'd').toDate() : new Date();
-    this.serviceDate.setMinutes(0);
-    this.serviceDate.setSeconds(0);
-
     this.filterForm = this.formBuilder.group({
-      serviceDateField: [{
-        year: this.serviceDate.getFullYear(),
-        month: this.serviceDate.getMonth() + 1,
-        day: this.serviceDate.getDate()
-      } as NgbDateStruct],
-      serviceHourRange: new FormControl([this.startHour, this.endHour])
+      serviceDateField: [this.getNgbMinSelectableDate(), Validators.required],
+      serviceHourRange: new FormControl([this.startHour, this.endHour], Validators.required),
+      sorting: ['desc', Validators.required]
     });
 
     this.route.data.subscribe(data => {
       this.service = data.service;
       this.availableExpertises.serviceId = this.service.id;
-      this.availableExpertises.dateTime = this.dateFormatter.transform(this.serviceDate);
+      this.availableExpertises.dateTime = this.dateFormatter.transform(this.getMinSelectableDate());
       this.availableExpertises.duration = this.endHour - this.startHour;
-      this.professionalsService.getAvailableProfessionals(this.availableExpertises).subscribe(expertises => {
-        this.expertises = expertises;
+      this.professionalsService.getAvailableExpertises(this.availableExpertises).subscribe(expertises => {
+        if (this.filterForm.controls.sorting.value === 'desc') {
+          this.expertises = expertises.sort((e1, e2) => e2.hourlyRate - e1.hourlyRate);
+        } else {
+          this.expertises = expertises.sort((e1, e2) => e1.hourlyRate - e2.hourlyRate);
+        }
       });
     });
   }
 
+  getMinSelectableDate(): Date {
+    const today = new Date();
+    today.setMinutes(0);
+    today.setSeconds(0);
+    return today.getHours() >= 17 ? moment(today).add(1, 'd').toDate() : today;
+  }
+
+  getNgbMinSelectableDate(): NgbDateStruct {
+    return {
+      year: this.getMinSelectableDate().getFullYear(),
+      month: this.getMinSelectableDate().getMonth() + 1,
+      day: this.getMinSelectableDate().getDate()
+    } as NgbDateStruct;
+  }
+
+  findExpertises(): void {
+    this.professionalsService.getAvailableExpertises(this.formModelToAvailableExpertises()).subscribe(expertises => {
+      if (this.filterForm.controls.sorting.value === 'desc') {
+        this.expertises = expertises.sort((e1, e2) => e2.hourlyRate - e1.hourlyRate);
+      } else {
+        this.expertises = expertises.sort((e1, e2) => e1.hourlyRate - e2.hourlyRate);
+      }
+    });
+  }
+
+  formModelToAvailableExpertises(): GetAvailableExpertises {
+    const availableExpertisesModel = this.filterForm.value;
+    const ngbServiceDateStruct = availableExpertisesModel.serviceDateField;
+    const serviceDate = moment(`${ngbServiceDateStruct.day}-${ngbServiceDateStruct.month}-${ngbServiceDateStruct.year}`, 'DD-MM-YYYY')
+      .hours(availableExpertisesModel.serviceHourRange[0])
+      .toDate();
+    return {
+      dateTime: this.dateFormatter.transform(serviceDate),
+      duration: availableExpertisesModel.serviceHourRange[1] - availableExpertisesModel.serviceHourRange[0],
+      serviceId: this.service.id
+    } as GetAvailableExpertises;
+  }
 }

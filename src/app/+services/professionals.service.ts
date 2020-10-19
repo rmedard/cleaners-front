@@ -19,7 +19,7 @@ export class ProfessionalsService {
   constructor(private http: HttpClient) {
   }
 
-  getAvailableProfessionals(availableExpertises: GetAvailableExpertises): Observable<Expertise[]> {
+  getAvailableExpertises(availableExpertises: GetAvailableExpertises): Observable<Expertise[]> {
     return this.http.post<Expertise[]>(`${this.baseUrl}/Expertises/available`, availableExpertises, httpOptions);
   }
 }

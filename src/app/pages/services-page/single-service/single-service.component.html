@@ -8,27 +8,43 @@
     <h2 class="text-center">Nos prestataires</h2>
     <div class="card mb-3 text-dark bg-light">
       <div class="card-body">
-        <form [formGroup]="filterForm">
-          <div class="form-group row">
-            <label for="idDateInput" class="col-2 col-form-label font-weight-bold">Date</label>
-            <div class="col-10">
-              <div class="input-group input-group-sm">
-                <input class="form-control" ngbDatepicker #datePicker="ngbDatepicker"
-                       formControlName="serviceDateField" id="idDateInput">
-                <div class="input-group-append">
-                  <button class="btn btn-outline-secondary calendar" (click)="datePicker.toggle()"
-                          type="button">
-                    <fa-icon [icon]="calendarIcon"></fa-icon>
-                  </button>
+        <form [formGroup]="filterForm" (ngSubmit)="findExpertises()">
+          <div class="row">
+            <div class="col-8">
+              <div class="form-group row">
+                <label for="idDateInput" class="col-2 col-form-label font-weight-bold">Date</label>
+                <div class="col-10">
+                  <div class="input-group input-group-sm">
+                    <input class="form-control" ngbDatepicker #datePicker="ngbDatepicker"
+                           formControlName="serviceDateField" id="idDateInput" [minDate]="getNgbMinSelectableDate()">
+                    <div class="input-group-append">
+                      <button class="btn btn-outline-secondary calendar" (click)="datePicker.toggle()"
+                              type="button">
+                        <fa-icon [icon]="calendarIcon"></fa-icon>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group row">
+                <label for="timeRangeInput" class="col-2 col-form-label font-weight-bold">Durée</label>
+                <div class="col-10">
+                  <ng5-slider formControlName="serviceHourRange"
+                              [options]="options" id="timeRangeInput"></ng5-slider>
                 </div>
               </div>
             </div>
-          </div>
-          <div class="form-group row">
-            <label for="timeRangeInput" class="col-2 col-form-label font-weight-bold">Durée</label>
-            <div class="col-10">
-              <ng5-slider formControlName="serviceHourRange"
-                          [options]="options" id="timeRangeInput"></ng5-slider>
+            <div class="col-4 d-flex justify-content-between flex-column">
+              <div class="btn-group btn-group-toggle btn-block btn-group-sm" ngbRadioGroup
+                   formControlName="sorting" name="radioBasic">
+                <label ngbButtonLabel class="btn-outline-primary">
+                  <input ngbButton type="radio" value="desc"> Prix Décroissant <fa-icon [icon]="descIcon"></fa-icon>
+                </label>
+                <label ngbButtonLabel class="btn-outline-primary">
+                  <input ngbButton type="radio" value="asc"> Prix Croissant <fa-icon [icon]="ascIcon"></fa-icon>
+                </label>
+              </div>
+              <button class="btn btn-sm btn-block btn-danger" type="submit"><fa-icon [icon]="searchIcon"></fa-icon> Chercher</button>
             </div>
           </div>
         </form>
