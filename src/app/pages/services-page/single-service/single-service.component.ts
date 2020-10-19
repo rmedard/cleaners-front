@@ -25,27 +25,9 @@ export class SingleServiceComponent implements OnInit {
   descIcon = faLongArrowAltDown;
   ascIcon = faLongArrowAltUp;
   searchIcon = faSearch;
-  startHour = 9;
+  startHour = 8;
   endHour = 10;
-  options: Options = {
-    floor: 8, ceil: 18, minRange: 1, showTicks: true,
-    getPointerColor: (): string => {
-      return '#212529';
-    },
-    getSelectionBarColor: (): string => {
-      return '#212529';
-    },
-    translate: (value: number, label: LabelType): string => {
-      switch (label) {
-        case LabelType.Low:
-          return '<b>De</b> ' + value + ':00';
-        case LabelType.High:
-          return '<b>À</b> ' + value + ':00';
-        default:
-          return value + ':00';
-      }
-    }
-  };
+  options: Options = {};
   availableExpertises = {} as GetAvailableExpertises;
 
   constructor(private route: ActivatedRoute,
@@ -55,7 +37,7 @@ export class SingleServiceComponent implements OnInit {
   }
 
   ngOnInit(): void {
-
+    this.options = this.getSliderOptions();
     this.filterForm = this.formBuilder.group({
       serviceDateField: [this.getNgbMinSelectableDate(), Validators.required],
       serviceHourRange: new FormControl([this.startHour, this.endHour], Validators.required),
@@ -81,7 +63,10 @@ export class SingleServiceComponent implements OnInit {
     const today = new Date();
     today.setMinutes(0);
     today.setSeconds(0);
-    return today.getHours() >= 17 ? moment(today).add(1, 'd').toDate() : today;
+    if (today.getHours() >= 17) {
+      return moment(today).add(1, 'd').hours(8).toDate();
+    }
+    return moment(today).add(1, 'h').toDate();
   }
 
   getNgbMinSelectableDate(): NgbDateStruct {
@@ -113,5 +98,30 @@ export class SingleServiceComponent implements OnInit {
       duration: availableExpertisesModel.serviceHourRange[1] - availableExpertisesModel.serviceHourRange[0],
       serviceId: this.service.id
     } as GetAvailableExpertises;
+  }
+
+  getSliderOptions(): Options {
+    return {
+      floor: this.getMinSelectableDate().getHours(),
+      ceil: 18,
+      minRange: 1,
+      showTicks: true,
+      getPointerColor: (): string => {
+        return '#212529';
+      },
+      getSelectionBarColor: (): string => {
+        return '#212529';
+      },
+      translate: (value: number, label: LabelType): string => {
+        switch (label) {
+          case LabelType.Low:
+            return '<b>De</b> ' + value + ':00';
+          case LabelType.High:
+            return '<b>À</b> ' + value + ':00';
+          default:
+            return value + ':00';
+        }
+      }
+    } as Options;
   }
 }
