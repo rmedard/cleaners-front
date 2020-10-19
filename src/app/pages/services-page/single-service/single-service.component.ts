@@ -7,7 +7,7 @@ import {faCalendarAlt, faLongArrowAltDown, faLongArrowAltUp, faSearch} from '@fo
 import {LabelType, Options} from 'ng5-slider';
 import {
   AvailableExpertiseSearchDto,
-  AvailableExpertisesSearch
+  AvailableExpertiseSearch
 } from '../../../+models/dto/available-expertise-search-dto';
 import {ProfessionalsService} from '../../../+services/professionals.service';
 import {SimpleDateStringPipe} from '../../../+utils/simple-date-string.pipe';
@@ -82,7 +82,7 @@ export class SingleServiceComponent implements OnInit {
   }
 
   findExpertises(): void {
-    const searchDto = new AvailableExpertisesSearch(this.filterForm, this.dateFormatter, this.service.id);
+    const searchDto = new AvailableExpertiseSearch(this.filterForm, this.dateFormatter, this.service.id);
     this.professionalsService.getAvailable(searchDto).subscribe(expertises => {
       if (this.filterForm.controls.sorting.value === 'desc') {
         this.expertises = expertises.sort((e1, e2) => e2.hourlyRate - e1.hourlyRate);

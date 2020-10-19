@@ -8,7 +8,7 @@ export interface AvailableExpertiseSearchDto {
   duration: number;
 }
 
-export class AvailableExpertisesSearch implements AvailableExpertiseSearchDto {
+export class AvailableExpertiseSearch implements AvailableExpertiseSearchDto {
   dateTime: string;
   duration: number;
   serviceId: number;
