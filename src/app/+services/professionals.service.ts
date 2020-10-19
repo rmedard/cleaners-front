@@ -3,7 +3,7 @@ import {environment} from '../../environments/environment';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {Expertise} from '../+models/expertise';
-import {GetAvailableExpertises} from '../+models/dto/get-available-expertises';
+import {AvailableExpertiseSearchDto} from '../+models/dto/available-expertise-search-dto';
 
 const httpOptions = {
   headers: new HttpHeaders({'Content-Type': 'application/json'})
@@ -19,7 +19,7 @@ export class ProfessionalsService {
   constructor(private http: HttpClient) {
   }
 
-  getAvailableExpertises(availableExpertises: GetAvailableExpertises): Observable<Expertise[]> {
-    return this.http.post<Expertise[]>(`${this.baseUrl}/Expertises/available`, availableExpertises, httpOptions);
+  getAvailable(searchDto: AvailableExpertiseSearchDto): Observable<Expertise[]> {
+    return this.http.post<Expertise[]>(`${this.baseUrl}/Expertises/available`, searchDto, httpOptions);
   }
 }

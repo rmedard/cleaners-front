@@ -5,7 +5,10 @@ import {Expertise} from '../../../+models/expertise';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {faCalendarAlt, faLongArrowAltDown, faLongArrowAltUp, faSearch} from '@fortawesome/free-solid-svg-icons';
 import {LabelType, Options} from 'ng5-slider';
-import {GetAvailableExpertises} from '../../../+models/dto/get-available-expertises';
+import {
+  AvailableExpertiseSearchDto,
+  AvailableExpertisesSearch
+} from '../../../+models/dto/available-expertise-search-dto';
 import {ProfessionalsService} from '../../../+services/professionals.service';
 import {SimpleDateStringPipe} from '../../../+utils/simple-date-string.pipe';
 import {NgbDateStruct} from '@ng-bootstrap/ng-bootstrap';
@@ -28,7 +31,7 @@ export class SingleServiceComponent implements OnInit {
   startHour = 8;
   endHour = 10;
   options: Options = {};
-  availableExpertises = {} as GetAvailableExpertises;
+  availableExpertises = {} as AvailableExpertiseSearchDto;
 
   constructor(private route: ActivatedRoute,
               private professionalsService: ProfessionalsService,
@@ -49,7 +52,7 @@ export class SingleServiceComponent implements OnInit {
       this.availableExpertises.serviceId = this.service.id;
       this.availableExpertises.dateTime = this.dateFormatter.transform(this.getMinSelectableDate());
       this.availableExpertises.duration = this.endHour - this.startHour;
-      this.professionalsService.getAvailableExpertises(this.availableExpertises).subscribe(expertises => {
+      this.professionalsService.getAvailable(this.availableExpertises).subscribe(expertises => {
         if (this.filterForm.controls.sorting.value === 'desc') {
           this.expertises = expertises.sort((e1, e2) => e2.hourlyRate - e1.hourlyRate);
         } else {
@@ -78,26 +81,14 @@ export class SingleServiceComponent implements OnInit {
   }
 
   findExpertises(): void {
-    this.professionalsService.getAvailableExpertises(this.formModelToAvailableExpertises()).subscribe(expertises => {
+    const searchDto = new AvailableExpertisesSearch(this.filterForm, this.dateFormatter, this.service.id);
+    this.professionalsService.getAvailable(searchDto).subscribe(expertises => {
       if (this.filterForm.controls.sorting.value === 'desc') {
         this.expertises = expertises.sort((e1, e2) => e2.hourlyRate - e1.hourlyRate);
       } else {
         this.expertises = expertises.sort((e1, e2) => e1.hourlyRate - e2.hourlyRate);
       }
     });
-  }
-
-  formModelToAvailableExpertises(): GetAvailableExpertises {
-    const availableExpertisesModel = this.filterForm.value;
-    const ngbServiceDateStruct = availableExpertisesModel.serviceDateField;
-    const serviceDate = moment(`${ngbServiceDateStruct.day}-${ngbServiceDateStruct.month}-${ngbServiceDateStruct.year}`, 'DD-MM-YYYY')
-      .hours(availableExpertisesModel.serviceHourRange[0])
-      .toDate();
-    return {
-      dateTime: this.dateFormatter.transform(serviceDate),
-      duration: availableExpertisesModel.serviceHourRange[1] - availableExpertisesModel.serviceHourRange[0],
-      serviceId: this.service.id
-    } as GetAvailableExpertises;
   }
 
   getSliderOptions(): Options {
