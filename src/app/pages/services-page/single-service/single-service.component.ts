@@ -6,8 +6,9 @@ import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {faCalendarAlt, faLongArrowAltDown, faLongArrowAltUp, faSearch} from '@fortawesome/free-solid-svg-icons';
 import {LabelType, Options} from 'ng5-slider';
 import {
+  AvailableExpertiseSearch,
   AvailableExpertiseSearchDto,
-  AvailableExpertiseSearch
+  Order
 } from '../../../+models/dto/available-expertise-search-dto';
 import {ProfessionalsService} from '../../../+services/professionals.service';
 import {SimpleDateStringPipe} from '../../../+utils/simple-date-string.pipe';
@@ -45,7 +46,7 @@ export class SingleServiceComponent implements OnInit {
     this.filterForm = this.formBuilder.group({
       serviceDateField: [this.getNgbMinSelectableDate(), Validators.required],
       serviceHourRange: new FormControl([this.startHour, this.endHour], Validators.required),
-      sorting: ['desc', Validators.required]
+      sorting: [Order.DESC.valueOf(), Validators.required]
     });
 
     this.route.data.subscribe(data => {
@@ -53,12 +54,9 @@ export class SingleServiceComponent implements OnInit {
       this.availableExpertises.serviceId = this.service.id;
       this.availableExpertises.dateTime = this.dateFormatter.transform(this.getMinSelectableDate());
       this.availableExpertises.duration = this.endHour - this.startHour;
+      this.availableExpertises.order = Order.DESC;
       this.professionalsService.getAvailable(this.availableExpertises).subscribe(expertises => {
-        if (this.filterForm.controls.sorting.value === 'desc') {
-          this.expertises = expertises.sort((e1, e2) => e2.hourlyRate - e1.hourlyRate);
-        } else {
-          this.expertises = expertises.sort((e1, e2) => e1.hourlyRate - e2.hourlyRate);
-        }
+        this.expertises = expertises;
       });
     });
   }
@@ -84,11 +82,7 @@ export class SingleServiceComponent implements OnInit {
   findExpertises(): void {
     const searchDto = new AvailableExpertiseSearch(this.filterForm, this.dateFormatter, this.service.id);
     this.professionalsService.getAvailable(searchDto).subscribe(expertises => {
-      if (this.filterForm.controls.sorting.value === 'desc') {
-        this.expertises = expertises.sort((e1, e2) => e2.hourlyRate - e1.hourlyRate);
-      } else {
-        this.expertises = expertises.sort((e1, e2) => e1.hourlyRate - e2.hourlyRate);
-      }
+      this.expertises = expertises;
     });
   }
 

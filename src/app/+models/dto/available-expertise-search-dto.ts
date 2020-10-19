@@ -6,12 +6,14 @@ export interface AvailableExpertiseSearchDto {
   serviceId: number;
   dateTime: string;
   duration: number;
+  order: Order;
 }
 
 export class AvailableExpertiseSearch implements AvailableExpertiseSearchDto {
   dateTime: string;
   duration: number;
   serviceId: number;
+  order: Order;
 
   constructor(formGroup: FormGroup, dateFormatter: SimpleDateStringPipe, serviceIdentifier: number) {
     const availableExpertisesModel = formGroup.value;
@@ -22,5 +24,10 @@ export class AvailableExpertiseSearch implements AvailableExpertiseSearchDto {
     this.dateTime = dateFormatter.transform(serviceDate);
     this.duration = availableExpertisesModel.serviceHourRange[1] - availableExpertisesModel.serviceHourRange[0];
     this.serviceId = serviceIdentifier;
+    this.order = availableExpertisesModel.sorting as Order;
   }
+}
+
+export enum Order {
+  DESC = 'Desc', ASC = 'Asc'
 }
