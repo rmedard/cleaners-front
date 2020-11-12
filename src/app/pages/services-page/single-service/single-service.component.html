@@ -17,7 +17,7 @@
                   <div class="input-group input-group-sm">
                     <input class="form-control" ngbDatepicker #datePicker="ngbDatepicker"
                            formControlName="serviceDateField" id="idDateInput" [minDate]="getNgbMinSelectableDate()"
-                           (click)="datePicker.toggle()">
+                           (click)="datePicker.toggle()" (dateSelect)="serviceDateChanged($event)">
                     <div class="input-group-append">
                       <button class="btn btn-outline-secondary calendar" (click)="datePicker.toggle()"
                               type="button">
@@ -60,17 +60,17 @@
     <div class="row">
       <div class="col-6 mb-3" *ngFor="let expertise of expertises">
         <div class="media border p-2">
-          <img *ngIf="expertise.professional.picture === ''" src="assets/unknown.png" alt=""
+          <img *ngIf="expertise.professional.user.picture === ''" src="assets/unknown.png" alt=""
                class="card-img-top rounded-circle" style="height: 100px; width: auto">
-          <img *ngIf="expertise.professional.picture" src="{{expertise.professional.picture}}" alt=""
+          <img *ngIf="expertise.professional.user.picture" src="{{expertise.professional.user.picture}}" alt=""
                class="card-img-top rounded-circle thumb-post">
           <div class="media-body row">
             <div class="col-8">
               <div class="pl-3">
-                <h2>{{expertise.professional.lastName}}, {{expertise.professional.firstName}}</h2>
-                <p class="mb-0">{{expertise.professional.address.streetName.trim()}}
-                  , {{expertise.professional.address.plotNumber}}<br>
-                  {{expertise.professional.address.postalCode}} {{expertise.professional.address.city}}</p>
+                <h2>{{expertise.professional.user.lastName}}, {{expertise.professional.user.firstName}}</h2>
+                <p class="mb-0">{{expertise.professional.user.address.streetName.trim()}}
+                  , {{expertise.professional.user.address.plotNumber}}<br>
+                  {{expertise.professional.user.address.postalCode}} {{expertise.professional.user.address.city}}</p>
               </div>
             </div>
             <div class="col-4 text-center d-flex flex-column justify-content-center">
@@ -82,6 +82,9 @@
         </div>
       </div>
     </div>
+  </div>
+  <div *ngIf="expertises.length == 0" class="alert alert-danger" role="alert">
+    Désolé! Pas de professionnels disponible
   </div>
 </div>
 <app-footer></app-footer>

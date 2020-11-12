@@ -12,7 +12,7 @@ import {
 } from '../../../+models/dto/available-expertise-search-dto';
 import {ProfessionalsService} from '../../../+services/professionals.service';
 import {SimpleDateStringPipe} from '../../../+utils/simple-date-string.pipe';
-import {NgbDateStruct} from '@ng-bootstrap/ng-bootstrap';
+import {NgbDate, NgbDateStruct} from '@ng-bootstrap/ng-bootstrap';
 import * as moment from 'moment';
 import {environment} from '../../../../environments/environment';
 
@@ -30,8 +30,8 @@ export class SingleServiceComponent implements OnInit {
   descIcon = faLongArrowAltDown;
   ascIcon = faLongArrowAltUp;
   searchIcon = faSearch;
-  startHour = environment.workingHourMin;
-  endHour = environment.workingHourMin + 2;
+  startHour: number;
+  endHour: number;
   options: Options = {};
   availableExpertises = {} as AvailableExpertiseSearchDto;
 
@@ -42,7 +42,9 @@ export class SingleServiceComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.options = this.sliderOptions();
+    this.options = this.sliderOptions(new Date());
+    this.startHour = this.options.floor;
+    this.endHour = this.options.floor + 1;
     this.filterForm = this.formBuilder.group({
       serviceDateField: [this.getNgbMinSelectableDate(), Validators.required],
       serviceHourRange: new FormControl([this.startHour, this.endHour], Validators.required),
@@ -86,8 +88,8 @@ export class SingleServiceComponent implements OnInit {
     });
   }
 
-  private sliderOptions(): Options {
-    return {
+  private sliderOptions(date: Date): Options {
+    const options = {
       floor: this.getMinSelectableDate().getHours(),
       ceil: environment.workingHourMax,
       minRange: 1,
@@ -109,5 +111,15 @@ export class SingleServiceComponent implements OnInit {
         }
       }
     } as Options;
+
+    if (!moment(date).isSame(moment().toDate(), 'd')) {
+      options.floor = environment.workingHourMin;
+    }
+    return options;
+  }
+
+  serviceDateChanged($event: NgbDate): void {
+    const jsDate = new Date($event.year, $event.month - 1, $event.day);
+    this.options = this.sliderOptions(jsDate);
   }
 }

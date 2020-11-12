@@ -1,3 +1,80 @@
 <app-navigation-bar></app-navigation-bar>
-<p>become-member-page works!</p>
+<div class="container mt-3 mb-3">
+  <form [formGroup]="registrationForm">
+    <div class="btn-group btn-group-toggle btn-block mb-3" ngbRadioGroup
+         formControlName="userTypeField" name="radioBasic">
+      <label ngbButtonLabel class="btn-outline-dark">
+        <fa-icon [icon]="userIcon"></fa-icon>
+        <input ngbButton type="radio" value="Customer"> Client
+      </label>
+      <label ngbButtonLabel class="btn-outline-dark">
+        <fa-icon [icon]="professionalIcon"></fa-icon>
+        <input ngbButton type="radio" value="Professional"> Prestataire
+      </label>
+    </div>
+    <div class="form-row">
+      <div class="form-group col-md-6">
+        <label for="regLastName">Nom</label>
+        <input type="text" class="form-control" id="regLastName" formControlName="regLastNameField">
+      </div>
+      <div class="form-group col-md-6">
+        <label for="regFirstName">Prénom</label>
+        <input type="text" class="form-control" id="regFirstName" formControlName="regFirstNameField">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group col-md-6">
+        <label for="regEmail">Email</label>
+        <input type="email" class="form-control" id="regEmail" formControlName="regEmailField">
+      </div>
+      <div class="form-group col-md-6">
+        <label for="regPassword">Password</label>
+        <input type="password" class="form-control" id="regPassword" formControlName="regPasswordField">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group col-md-9">
+        <label for="regStreet">Rue</label>
+        <input type="text" class="form-control" id="regStreet" formControlName="regStreetField">
+      </div>
+      <div class="form-group col-md-3">
+        <label for="regPlotNumber">Numéro</label>
+        <input type="text" class="form-control" id="regPlotNumber" formControlName="regPlotNumberField">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group col-md-6">
+        <label for="regCity">Commune</label>
+        <input type="text" class="form-control" id="regCity" formControlName="regCityField">
+      </div>
+      <div class="form-group col-md-6">
+        <label for="regPostalCode">Code Postal</label>
+        <input type="text" class="form-control" id="regPostalCode" formControlName="regPostalCodeField">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group col-md-8">
+        <label for="regService1">Service</label>
+        <select class="form-control" id="regService1">
+          <option>1</option>
+          <option>2</option>
+          <option>3</option>
+        </select>
+      </div>
+      <div class="form-group col-md-3">
+        <label for="regPriceService1">Prix</label>
+        <div class="input-group">
+          <input type="number" class="form-control" placeholder="1.00" id="regPriceService1" aria-describedby="hourlyRate">
+          <div class="input-group-append">
+            <span class="input-group-text" id="hourlyRate">Euro/heure</span>
+          </div>
+        </div>
+      </div>
+      <div class="form-group col-md-1">
+        <button type="button" class="btn btn-success"><fa-icon [icon]="addIcon"></fa-icon></button>
+      </div>
+    </div>
+    <button type="submit" class="btn btn-primary">Sauvegarder</button>
+  </form>
+</div>
 <app-footer></app-footer>

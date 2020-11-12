@@ -1,6 +1,6 @@
 import {Address} from './address';
 
-export interface Person {
+export interface User {
   email: string;
   firstName: string;
   lastName: string;
@@ -9,4 +9,8 @@ export interface Person {
   address: Address;
   picture: string;
   userId: number;
+}
+
+export enum UserType {
+  CUSTOMER = 'Customer', PROFESSIONAL = 'Professional'
 }

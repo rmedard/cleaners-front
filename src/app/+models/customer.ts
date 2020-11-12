@@ -1,5 +1,7 @@
-import {Person} from './person';
+import {User} from './user';
 
-export interface Customer extends Person {
+export interface Customer {
   id: number;
+  user: User;
+  isActive: boolean;
 }
