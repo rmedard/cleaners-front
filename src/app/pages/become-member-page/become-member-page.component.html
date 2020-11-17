@@ -3,11 +3,11 @@
   <form [formGroup]="registrationForm">
     <div class="btn-group btn-group-toggle btn-block mb-3" ngbRadioGroup
          formControlName="userTypeField" name="radioBasic">
-      <label ngbButtonLabel class="btn-outline-dark">
+      <label ngbButtonLabel class="btn-outline-dark" (click)="toggleUserType('Customer')">
         <fa-icon [icon]="userIcon"></fa-icon>
         <input ngbButton type="radio" value="Customer"> Client
       </label>
-      <label ngbButtonLabel class="btn-outline-dark">
+      <label ngbButtonLabel class="btn-outline-dark" (click)="toggleUserType('Professional')">
         <fa-icon [icon]="professionalIcon"></fa-icon>
         <input ngbButton type="radio" value="Professional"> Prestataire
       </label>
@@ -52,29 +52,52 @@
         <input type="text" class="form-control" id="regPostalCode" formControlName="regPostalCodeField">
       </div>
     </div>
-    <div class="form-row">
-      <div class="form-group col-md-8">
-        <label for="regService1">Service</label>
-        <select class="form-control" id="regService1">
-          <option>1</option>
-          <option>2</option>
-          <option>3</option>
-        </select>
+    <div class="card" *ngIf="userType === 'Professional'">
+      <div class="card-header">
+        <p class="font-weight-bold mb-0">Les services proposés</p>
       </div>
-      <div class="form-group col-md-3">
-        <label for="regPriceService1">Prix</label>
-        <div class="input-group">
-          <input type="number" class="form-control" placeholder="1.00" id="regPriceService1" aria-describedby="hourlyRate">
-          <div class="input-group-append">
-            <span class="input-group-text" id="hourlyRate">Euro/heure</span>
+      <div class="card-body">
+        <ng-container *ngFor="let proposedService of proposedServices.controls; let i=index">
+          <div class="form-row" [formGroup]="$any(proposedService)">
+            <div class="form-group col-md-8">
+              <label for="regService{{i}}">Service</label>
+              <select class="form-control" id="regService{{i}}" formControlName="regService">
+                <option *ngFor="let service of services" [ngValue]="service" [disabled]="isSelected(service)">{{service.title}}</option>
+              </select>
+            </div>
+            <div class="form-group col-md-3">
+              <label for="regPriceService{{i}}">Prix</label>
+              <div class="input-group">
+                <input type="number" class="form-control" placeholder="1.00"
+                       id="regPriceService{{i}}" aria-describedby="hourlyRate" formControlName="regHourlyRate">
+                <div class="input-group-append">
+                  <span class="input-group-text" id="hourlyRate"><fa-icon [icon]="euroIcon"></fa-icon> /Heure</span>
+                </div>
+              </div>
+            </div>
+            <div class="form-group col-md-1">
+              <label for="addService{{i}}">&nbsp;</label>
+              <button type="button" class="btn btn-block btn-danger" id="addService{{i}}"
+                      (click)="removeProposedService(i)" [disabled]="proposedServices.length == 1">
+                <fa-icon [icon]="removeIcon"></fa-icon>
+              </button>
+            </div>
+          </div>
+        </ng-container>
+        <div class="form-row">
+          <div class="col">
+            <button class="btn btn-success btn-sm" (click)="addProposedService()" [disabled]="canAddServices()">
+              <fa-icon [icon]="addIcon"></fa-icon> Add Service
+            </button>
           </div>
         </div>
       </div>
-      <div class="form-group col-md-1">
-        <button type="button" class="btn btn-success"><fa-icon [icon]="addIcon"></fa-icon></button>
+    </div>
+    <div class="form-row mt-3">
+      <div class="col">
+        <button type="submit" class="btn btn-primary">Sauvegarder</button>
       </div>
     </div>
-    <button type="submit" class="btn btn-primary">Sauvegarder</button>
   </form>
 </div>
 <app-footer></app-footer>
