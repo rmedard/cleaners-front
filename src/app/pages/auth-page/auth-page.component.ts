@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
+import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 
 @Component({
   selector: 'app-auth-page',
@@ -6,10 +7,19 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./auth-page.component.scss']
 })
 export class AuthPageComponent implements OnInit {
+  loginForm: FormGroup;
 
-  constructor() { }
-
-  ngOnInit(): void {
+  constructor(private formBuilder: FormBuilder) {
   }
 
+  ngOnInit(): void {
+    this.loginForm = this.formBuilder.group({
+      loginEmailField: new FormControl('', [Validators.required, Validators.email]),
+      loginPasswordField: new FormControl('', [Validators.required])
+    });
+  }
+
+  login(): void {
+
+  }
 }

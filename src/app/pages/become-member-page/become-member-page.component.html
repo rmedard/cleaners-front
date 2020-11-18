@@ -1,6 +1,11 @@
 <app-navigation-bar></app-navigation-bar>
 <div class="container mt-3 mb-3">
-  <form [formGroup]="registrationForm">
+  <ng-container *ngFor="let alert of alerts">
+    <ngb-alert [type]="alert.type" [dismissible]="alert.dismissible" (close)="onClosed(alert)">
+      {{ alert.msg }}
+    </ngb-alert>
+  </ng-container>
+  <form [formGroup]="registrationForm" (submit)="register()">
     <div class="btn-group btn-group-toggle btn-block mb-3" ngbRadioGroup
          formControlName="userTypeField" name="radioBasic">
       <label ngbButtonLabel class="btn-outline-dark" (click)="toggleUserType('Customer')">
@@ -15,7 +20,7 @@
     <div class="form-row">
       <div class="form-group col-md-6">
         <label for="regLastName">Nom</label>
-        <input type="text" class="form-control" id="regLastName" formControlName="regLastNameField">
+        <input type="text" class="form-control" id="regLastName" formControlName="regLastNameField" required="{{true}}">
       </div>
       <div class="form-group col-md-6">
         <label for="regFirstName">Prénom</label>
@@ -23,21 +28,25 @@
       </div>
     </div>
     <div class="form-row">
-      <div class="form-group col-md-6">
+      <div class="form-group col-md-4">
+        <label for="regPhone">Phone</label>
+        <input type="email" class="form-control" id="regPhone" formControlName="regPhoneField">
+      </div>
+      <div class="form-group col-md-4">
         <label for="regEmail">Email</label>
         <input type="email" class="form-control" id="regEmail" formControlName="regEmailField">
       </div>
-      <div class="form-group col-md-6">
+      <div class="form-group col-md-4">
         <label for="regPassword">Password</label>
         <input type="password" class="form-control" id="regPassword" formControlName="regPasswordField">
       </div>
     </div>
     <div class="form-row">
-      <div class="form-group col-md-9">
+      <div class="form-group col-md-8">
         <label for="regStreet">Rue</label>
         <input type="text" class="form-control" id="regStreet" formControlName="regStreetField">
       </div>
-      <div class="form-group col-md-3">
+      <div class="form-group col-md-4">
         <label for="regPlotNumber">Numéro</label>
         <input type="text" class="form-control" id="regPlotNumber" formControlName="regPlotNumberField">
       </div>
@@ -86,7 +95,7 @@
         </ng-container>
         <div class="form-row">
           <div class="col">
-            <button class="btn btn-success btn-sm" (click)="addProposedService()" [disabled]="canAddServices()">
+            <button type="button" class="btn btn-success btn-sm" (click)="addProposedService()" [disabled]="canAddServices()">
               <fa-icon [icon]="addIcon"></fa-icon> Add Service
             </button>
           </div>
@@ -95,7 +104,7 @@
     </div>
     <div class="form-row mt-3">
       <div class="col">
-        <button type="submit" class="btn btn-primary">Sauvegarder</button>
+        <button type="submit" class="btn btn-primary" [disabled]="!isFormValid()">Sauvegarder</button>
       </div>
     </div>
   </form>
