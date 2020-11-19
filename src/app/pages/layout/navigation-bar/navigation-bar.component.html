@@ -23,8 +23,12 @@
         <li class="nav-item">
           <a class="nav-link" [routerLink]="['/contact']">Nous contacter</a>
         </li>
+        <li class="nav-item" *ngIf="userLoggedIn">
+          <a class="nav-link btn btn-outline-warning" [routerLink]="['/profile']">Mon Profil</a>
+        </li>
         <li class="nav-item">
-          <a class="nav-link btn btn-outline-success" [routerLink]="['/login']">S'identifier</a>
+          <a class="nav-link btn btn-outline-success" [routerLink]="['/login']" *ngIf="!userLoggedIn">S'identifier</a>
+          <button type="button" (click)="logout()" class="btn btn-outline-success" *ngIf="userLoggedIn">Se déconnecter</button>
         </li>
       </ul>
     </div>

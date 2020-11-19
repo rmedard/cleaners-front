@@ -1,0 +1,117 @@
+<app-navigation-bar></app-navigation-bar>
+<div class="container-fluid">
+  <div class="row">
+    <main role="main" class="col-md-12 ml-sm-auto mt-3">
+      <ng-container *ngFor="let alert of alerts">
+        <ngb-alert [type]="alert.type" [dismissible]="alert.dismissible" (close)="onClosed(alert)">
+          {{ alert.msg }}
+        </ngb-alert>
+      </ng-container>
+
+      <div class="row">
+        <div class="col-md-3">
+          <div class="card mb-3">
+            <img class="card-img-top" src="../../../assets/unknown.png" alt="Card image cap">
+            <div class="card-body">
+              <span class="badge badge-success" *ngFor="let roleUser of user.roles">{{roleUser.role.roleName}}</span>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-9">
+          <div class="card mb-3">
+            <div class="card-body pt-2 pb-2">
+              <div class="row">
+                <div class="col-sm-3">
+                  <h6 class="mb-0">Full Name</h6>
+                </div>
+                <div class="col-sm-9 text-secondary">
+                  {{user.firstName}} {{user.lastName}}
+                </div>
+              </div>
+              <hr class="mt-1 mb-1">
+              <div class="row">
+                <div class="col-sm-3">
+                  <h6 class="mb-0">Email</h6>
+                </div>
+                <div class="col-sm-9 text-secondary">
+                   {{user.email}}
+                </div>
+              </div>
+              <hr class="mt-1 mb-1">
+              <div class="row">
+                <div class="col-sm-3">
+                  <h6 class="mb-0">Phone</h6>
+                </div>
+                <div class="col-sm-9 text-secondary">
+                  {{user.phoneNumber}}
+                </div>
+              </div>
+              <hr class="mt-1 mb-1">
+              <div class="row">
+                <div class="col-sm-3">
+                  <h6 class="mb-0">Address</h6>
+                </div>
+                <div class="col-sm-9 text-secondary">
+                  {{user.address.streetName}} {{user.address.plotNumber}}, {{user.address.postalCode}} {{user.address.city}}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <table class="table table-hover" *ngIf="professional">
+            <thead class="thead-dark">
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Profession</th>
+              <th scope="col">Category</th>
+              <th scope="col">Hourly Rate</th>
+              <th scope="col">Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let expertise of professional.expertises; let i = index">
+              <th scope="row">{{ i + 1 }}</th>
+              <td>{{ expertise.service.title }}</td>
+              <td>{{ expertise.service.category }}</td>
+              <td>{{ expertise.hourlyRate }} Euro</td>
+              <td>
+                <div class="btn-toolbar" role="toolbar">
+                  <div class="btn-group btn-group-sm mr-2" role="group" aria-label="Actions group">
+                    <button class="btn btn-outline-warning" (click)="openModal(true, template, expertise)">Edit</button>
+                  </div>
+                </div>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+          <nav class="navbar navbar-light bg-light">
+            <span class="display-4">Orders</span>
+          </nav>
+          <table class="table table-hover" *ngIf="customer">
+            <thead class="thead-dark">
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Expertise</th>
+              <th scope="col">Execution date</th>
+              <th scope="col">Duration</th>
+              <th scope="col">Total cost</th>
+              <th scope="col">Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let order of customer.reservations; let i = index">
+              <th scope="row">{{ i + 1 }}</th>
+              <td>{{ order.expertise.service.title }}</td>
+              <td>{{ order.startTime | date:'short' }}</td>
+              <td>{{ getDuration(order) }} hours</td>
+              <td>{{ order.totalCost | number: '1.2' }} <fa-icon [icon]="euroIcon"></fa-icon></td>
+              <td>Action</td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+<app-footer></app-footer>

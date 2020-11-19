@@ -1,4 +1,5 @@
 import {Address} from './address';
+import {RoleUser} from './role-user';
 
 export interface User {
   email: string;
@@ -9,6 +10,7 @@ export interface User {
   address: Address;
   picture: string;
   userId: number;
+  roles: RoleUser[];
 }
 
 export enum UserType {

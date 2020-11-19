@@ -1,6 +1,11 @@
 <app-navigation-bar></app-navigation-bar>
-<div class="container text-center w-50">
-  <form [formGroup]="loginForm" (submit)="login()" class="pb-4 pt-4">
+<div class="container text-center w-50 pt-4">
+  <ng-container *ngFor="let alert of alerts">
+    <ngb-alert [type]="alert.type" [dismissible]="alert.dismissible" (close)="onClosed(alert)">
+      {{ alert.msg }}
+    </ngb-alert>
+  </ng-container>
+  <form [formGroup]="loginForm" (submit)="login()" class="pb-4">
     <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
     <div class="form-group">
       <label for="inputEmail" class="sr-only">Email address</label>

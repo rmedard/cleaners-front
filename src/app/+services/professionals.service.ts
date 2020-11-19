@@ -28,4 +28,8 @@ export class ProfessionalsService {
   createProfessional(professional: ProfessionalForCreate): Observable<Professional> {
     return this.http.post<Professional>(`${this.baseUrl}/Professionals`, professional, httpOptions);
   }
+
+  getProfessional(professionalId: number): Observable<Professional> {
+    return this.http.get<Professional>(`${this.baseUrl}/Professionals/${professionalId}`, httpOptions);
+  }
 }

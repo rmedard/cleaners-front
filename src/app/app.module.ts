@@ -21,6 +21,8 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {Ng5SliderModule} from 'ng5-slider';
 import {SimpleDateStringPipe} from './+utils/simple-date-string.pipe';
+import {JwtModule} from '@auth0/angular-jwt';
+import { ProfilePageComponent } from './pages/profile-page/profile-page.component';
 
 @NgModule({
   declarations: [
@@ -35,13 +37,14 @@ import {SimpleDateStringPipe} from './+utils/simple-date-string.pipe';
     BecomeMemberPageComponent,
     EllipsisPipe,
     SingleServiceComponent,
-    SimpleDateStringPipe
+    SimpleDateStringPipe,
+    ProfilePageComponent
   ],
   imports: [
     BrowserModule,
     RouterModule.forRoot(appRoutes),
     CarouselModule, HttpClientModule, FontAwesomeModule,
-    ReactiveFormsModule, BrowserAnimationsModule, NgbModule, Ng5SliderModule
+    ReactiveFormsModule, BrowserAnimationsModule, NgbModule, Ng5SliderModule, JwtModule
   ],
   providers: [SimpleDateStringPipe],
   bootstrap: [AppComponent]
