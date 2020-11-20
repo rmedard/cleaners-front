@@ -4,31 +4,38 @@
     <a class="navbar-brand p-0" [routerLink]="['/home-page']">
       <img src="../../../../assets/hr-logo.png" alt="" style="max-height: 45px">
     </a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive"
+            aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarResponsive">
       <ul class="navbar-nav ml-auto">
         <li class="nav-item active">
-          <a class="nav-link" [routerLink]="['/home']">Home
+          <a class="nav-link" [routerLink]="['/home']">{{'home' | translate}}
             <!--<span class="sr-only">(current)</span>-->
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" [routerLink]="['/services']">Nos Services</a>
+          <a class="nav-link" [routerLink]="['/services']">{{'our_services' | translate}}</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" [routerLink]="['/become-member']">Devenez membre</a>
+          <a class="nav-link" [routerLink]="['/become-member']">{{'become_member' | translate}}</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" [routerLink]="['/contact']">Nous contacter</a>
+          <a class="nav-link" [routerLink]="['/contact']">{{'contact_us' | translate}}</a>
         </li>
         <li class="nav-item" *ngIf="userLoggedIn">
-          <a class="nav-link btn btn-outline-warning" [routerLink]="['/profile']">Mon Profil</a>
+          <a class="nav-link btn btn-outline-warning" [routerLink]="['/profile']">{{'my_profile' | translate}}</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link btn btn-outline-success" [routerLink]="['/login']" *ngIf="!userLoggedIn">S'identifier</a>
-          <button type="button" (click)="logout()" class="btn btn-outline-success" *ngIf="userLoggedIn">Se déconnecter</button>
+          <a class="nav-link btn btn-outline-success" [routerLink]="['/login']" *ngIf="!userLoggedIn">{{'login' | translate}}</a>
+          <button type="button" (click)="logout()" class="btn btn-outline-success" *ngIf="userLoggedIn">{{'logout' | translate}}</button>
+        </li>
+        <li class="nav-item">
+          <select class="custom-select" id="language-selector" (change)="changeLang($event.target.value)">
+            <option value="fr" [selected]="lang == 'fr'">Français</option>
+            <option value="en" [selected]="lang == 'en'">English</option>
+          </select>
         </li>
       </ul>
     </div>

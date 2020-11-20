@@ -10,54 +10,54 @@
          formControlName="userTypeField" name="radioBasic">
       <label ngbButtonLabel class="btn-outline-dark" (click)="toggleUserType('Customer')">
         <fa-icon [icon]="userIcon"></fa-icon>
-        <input ngbButton type="radio" value="Customer"> Client
+        <input ngbButton type="radio" value="Customer"> {{'client' | translate}}
       </label>
       <label ngbButtonLabel class="btn-outline-dark" (click)="toggleUserType('Professional')">
         <fa-icon [icon]="professionalIcon"></fa-icon>
-        <input ngbButton type="radio" value="Professional"> Prestataire
+        <input ngbButton type="radio" value="Professional"> {{'professional' | translate}}
       </label>
     </div>
     <div class="form-row">
       <div class="form-group col-md-6">
-        <label for="regLastName">Nom</label>
+        <label for="regLastName">{{'last_name' | translate}}</label>
         <input type="text" class="form-control" id="regLastName" formControlName="regLastNameField" required="{{true}}">
       </div>
       <div class="form-group col-md-6">
-        <label for="regFirstName">Prénom</label>
+        <label for="regFirstName">{{'last_name' | translate}}</label>
         <input type="text" class="form-control" id="regFirstName" formControlName="regFirstNameField">
       </div>
     </div>
     <div class="form-row">
       <div class="form-group col-md-4">
-        <label for="regPhone">Phone</label>
+        <label for="regPhone">{{'phone' | translate}}</label>
         <input type="email" class="form-control" id="regPhone" formControlName="regPhoneField">
       </div>
       <div class="form-group col-md-4">
-        <label for="regEmail">Email</label>
+        <label for="regEmail">{{'email' | translate}}</label>
         <input type="email" class="form-control" id="regEmail" formControlName="regEmailField">
       </div>
       <div class="form-group col-md-4">
-        <label for="regPassword">Password</label>
+        <label for="regPassword">{{'password' | translate}}</label>
         <input type="password" class="form-control" id="regPassword" formControlName="regPasswordField">
       </div>
     </div>
     <div class="form-row">
       <div class="form-group col-md-8">
-        <label for="regStreet">Rue</label>
+        <label for="regStreet">{{'street' | translate}}</label>
         <input type="text" class="form-control" id="regStreet" formControlName="regStreetField">
       </div>
       <div class="form-group col-md-4">
-        <label for="regPlotNumber">Numéro</label>
+        <label for="regPlotNumber">{{'number' | translate}}</label>
         <input type="text" class="form-control" id="regPlotNumber" formControlName="regPlotNumberField">
       </div>
     </div>
     <div class="form-row">
       <div class="form-group col-md-8">
-        <label for="regCity">Commune</label>
+        <label for="regCity">{{'city' | translate}}</label>
         <input type="text" class="form-control" id="regCity" formControlName="regCityField">
       </div>
       <div class="form-group col-md-4">
-        <label for="regPostalCode">Code Postal</label>
+        <label for="regPostalCode">{{'zipcode' | translate}}</label>
         <input type="text" class="form-control" id="regPostalCode" formControlName="regPostalCodeField">
       </div>
     </div>
@@ -104,7 +104,7 @@
     </div>
     <div class="form-row mt-3">
       <div class="col">
-        <button type="submit" class="btn btn-primary" [disabled]="!isFormValid()">Sauvegarder</button>
+        <button type="submit" class="btn btn-primary" [disabled]="!isFormValid()">{{'register' | translate}}</button>
       </div>
     </div>
   </form>

@@ -4,6 +4,7 @@ import {AuthService} from '../../+services/auth.service';
 import {LoggedInUser} from '../../+models/dto/logged-in-user';
 import {Alert} from '../../+models/dto/alert';
 import {Router} from '@angular/router';
+import {TranslateService} from '@ngx-translate/core';
 
 @Component({
   selector: 'app-auth-page',
@@ -14,7 +15,10 @@ export class AuthPageComponent implements OnInit {
   loginForm: FormGroup;
   alerts: Alert[] = [];
 
-  constructor(private formBuilder: FormBuilder, private authService: AuthService, private router: Router) {
+  constructor(private formBuilder: FormBuilder,
+              private authService: AuthService,
+              private router: Router,
+              private translateService: TranslateService) {
   }
 
   ngOnInit(): void {
@@ -30,21 +34,28 @@ export class AuthPageComponent implements OnInit {
       const password = this.loginForm.controls.loginPasswordField.value;
       this.authService.login(email, password).subscribe(loggedInUser => {
         localStorage.setItem('user', JSON.stringify(loggedInUser as LoggedInUser));
-        this.router.navigate(['/profile']);
-        this.alerts.push({
-          type: 'success',
-          msg: 'You are logged in successfully!!',
-          dismissible: true
-        } as Alert);
+        this.router.navigate(['/profile']).then(() => {
+          window.location.reload();
+        });
+        this.translateService.getTranslation('msg_login_success').subscribe(message => {
+          this.alerts.push({
+            type: 'success',
+            msg: message,
+            dismissible: true
+          } as Alert);
+        });
       }, error => {
-        this.alerts.push({
-          type: 'danger',
-          msg: 'Log in failed. Please try again!!',
-          dismissible: true
-        } as Alert);
+        this.translateService.getTranslation('msg_login_fail').subscribe(message => {
+          this.alerts.push({
+            type: 'danger',
+            msg: message,
+            dismissible: true
+          } as Alert);
+        });
       });
     }
   }
+
   onClosed(dismissedAlert: Alert): void {
     this.alerts = this.alerts.filter(alert => alert !== dismissedAlert);
   }

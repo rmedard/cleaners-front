@@ -9,15 +9,22 @@ import {AuthService} from '../../../+services/auth.service';
 export class NavigationBarComponent implements OnInit {
 
   userLoggedIn = false;
+  lang;
 
   constructor(private authService: AuthService) {
   }
 
   ngOnInit(): void {
+    this.lang = localStorage.getItem('lang') || 'fr';
     this.userLoggedIn = this.authService.loggedIn();
   }
 
   logout(): void {
     this.authService.logout();
+  }
+
+  changeLang(lang: any): void {
+    localStorage.setItem('lang', lang);
+    window.location.reload();
   }
 }
