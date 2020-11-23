@@ -34,7 +34,7 @@
                   <h6 class="mb-0">Email</h6>
                 </div>
                 <div class="col-sm-9 text-secondary">
-                   {{user.email}}
+                  {{user.email}}
                 </div>
               </div>
               <hr class="mt-1 mb-1">
@@ -52,7 +52,8 @@
                   <h6 class="mb-0">Address</h6>
                 </div>
                 <div class="col-sm-9 text-secondary">
-                  {{user.address.streetName}} {{user.address.plotNumber}}, {{user.address.postalCode}} {{user.address.city}}
+                  {{user.address.streetName}} {{user.address.plotNumber}}
+                  , {{user.address.postalCode}} {{user.address.city}}
                 </div>
               </div>
             </div>
@@ -77,7 +78,7 @@
               <td>
                 <div class="btn-toolbar" role="toolbar">
                   <div class="btn-group btn-group-sm mr-2" role="group" aria-label="Actions group">
-<!--                    <button class="btn btn-outline-warning" (click)="openModal(true, template, expertise)">Edit</button>-->
+                    <!--                    <button class="btn btn-outline-warning" (click)="openModal(true, template, expertise)">Edit</button>-->
                     <button class="btn btn-outline-warning" (click)="open(template)">Edit</button>
                   </div>
                 </div>
@@ -92,8 +93,8 @@
             <thead class="thead-dark">
             <tr>
               <th scope="col">#</th>
-              <th scope="col">Expertise</th>
-              <th scope="col">Execution date</th>
+              <th scope="col">{{'expertise' | translate}}</th>
+              <th scope="col">{{'service_date' | translate }}</th>
               <th scope="col">Duration</th>
               <th scope="col">Total cost</th>
               <th scope="col">Actions</th>
@@ -105,7 +106,9 @@
               <td>{{ order.expertise.service.title }}</td>
               <td>{{ order.startTime | date:'short' }}</td>
               <td>{{ getDuration(order) }} hours</td>
-              <td>{{ order.totalCost | number: '1.2' }} <fa-icon [icon]="euroIcon"></fa-icon></td>
+              <td>{{ order.totalCost | number: '1.2' }}
+                <fa-icon [icon]="euroIcon"></fa-icon>
+              </td>
               <td>Action</td>
             </tr>
             </tbody>

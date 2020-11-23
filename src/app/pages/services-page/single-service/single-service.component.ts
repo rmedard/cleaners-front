@@ -12,9 +12,14 @@ import {
 } from '../../../+models/dto/available-expertise-search-dto';
 import {ProfessionalsService} from '../../../+services/professionals.service';
 import {SimpleDateStringPipe} from '../../../+utils/simple-date-string.pipe';
-import {NgbDate, NgbDateStruct} from '@ng-bootstrap/ng-bootstrap';
+import {NgbDate, NgbDateStruct, NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import * as moment from 'moment';
 import {environment} from '../../../../environments/environment';
+import {Reservation} from '../../../+models/reservation';
+import {AuthService} from '../../../+services/auth.service';
+import {ReservationForCreate} from '../../../+models/dto/reservation-for-create';
+import {ReservationService} from '../../../+services/reservation.service';
+import {Alert} from '../../../+models/dto/alert';
 
 @Component({
   selector: 'app-single-service',
@@ -34,11 +39,16 @@ export class SingleServiceComponent implements OnInit {
   endHour: number;
   options: Options = {};
   availableExpertises = {} as AvailableExpertiseSearchDto;
+  reservation: Reservation = {} as Reservation;
+  alerts: Alert[] = [];
 
   constructor(private route: ActivatedRoute,
               private professionalsService: ProfessionalsService,
               private formBuilder: FormBuilder,
-              private dateFormatter: SimpleDateStringPipe) {
+              private dateFormatter: SimpleDateStringPipe,
+              private modalService: NgbModal,
+              private authService: AuthService,
+              private reservationsService: ReservationService) {
   }
 
   ngOnInit(): void {
@@ -121,5 +131,45 @@ export class SingleServiceComponent implements OnInit {
   serviceDateChanged($event: NgbDate): void {
     const jsDate = new Date($event.year, $event.month - 1, $event.day);
     this.options = this.sliderOptions(jsDate);
+  }
+
+  order(content: any, selectedExpertise: Expertise): void {
+    const serviceNgbDate = this.filterForm.controls.serviceDateField.value as NgbDate;
+    const serviceDate = new Date(serviceNgbDate.year, serviceNgbDate.month, serviceNgbDate.day);
+    const range = this.filterForm.controls.serviceHourRange.value as Array<number>;
+    this.reservation = {
+      startTime: moment(serviceDate).hours(range[0]).seconds(0).toDate(),
+      endTime: moment(serviceDate).hours(range[1]).seconds(0).toDate(),
+      expertise: selectedExpertise,
+      customerId: this.authService.getLoggedInUser().userAccount.customerId,
+      totalCost: selectedExpertise.hourlyRate * (range[1] - range[0])
+    } as Reservation;
+    this.modalService.open(content, {size: 'lg'});
+  }
+
+  sendOrder(): void {
+    const range = this.filterForm.controls.serviceHourRange.value as Array<number>;
+    const reservationForCreate = {
+      customerId: this.authService.getLoggedInUser().userAccount.customerId,
+      expertiseForServiceCreate: {professionalId: this.reservation.expertise.professionalId, serviceId: this.service.id},
+      startTime: this.reservation.startTime,
+      duration: range[1] - range[0]
+    } as ReservationForCreate;
+    this.reservationsService.createOrder(reservationForCreate).subscribe(data => {
+      console.log(data);
+      this.alerts.push({
+        type: 'success',
+        msg: 'Votre reservation est bien créée!!',
+        dismissible: true
+      } as Alert);
+    }, error => {
+      this.alerts.push({
+        type: 'danger',
+        msg: `La création do votre reservation a échouée: ${error.error}`,
+        dismissible: true
+      } as Alert);
+    }, () => {
+      this.modalService.dismissAll();
+    });
   }
 }

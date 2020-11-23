@@ -1,11 +1,15 @@
 <app-navigation-bar></app-navigation-bar>
 <div class="container">
+  <ng-container *ngFor="let alert of alerts">
+    <ngb-alert [type]="alert.type" [dismissible]="alert.dismissible" (close)="onClosed(alert)">
+      {{ alert.msg }}
+    </ngb-alert>
+  </ng-container>
   <h1 class="text-center text-capitalize">{{service.title}}</h1>
   <div>
     {{service.description}}
   </div>
   <div *ngIf="expertises.length > 0">
-    <h2 class="text-center">Nos prestataires</h2>
     <div class="card mb-3 text-dark bg-light">
       <div class="card-body">
         <form [formGroup]="filterForm" (ngSubmit)="findExpertises()">
@@ -56,7 +60,7 @@
         </form>
       </div>
     </div>
-
+    <h2 class="text-center">Nos prestataires disponibles</h2>
     <div class="row">
       <div class="col-6 mb-3" *ngFor="let expertise of expertises">
         <div class="media border p-2">
@@ -76,7 +80,7 @@
             <div class="col-4 text-center d-flex flex-column justify-content-center">
               <span class="badge badge-pill badge-light mb-2" style="font-size: 0.9em">{{expertise.hourlyRate}}
                 €/Heure</span>
-              <a href="#" class="btn btn-outline-success btn-sm">Commander</a>
+              <button type="button" class="btn btn-outline-success btn-sm" (click)="order(content, expertise)">Commander</button>
             </div>
           </div>
         </div>
@@ -86,5 +90,29 @@
   <div *ngIf="expertises.length == 0" class="alert alert-danger" role="alert">
     Désolé! Pas de professionnels disponible
   </div>
+  <ng-template #content let-modal>
+    <div class="modal-header">
+      <h4 class="modal-title">{{service.title}}</h4>
+      <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <dl class="row">
+        <dt class="col-sm-4">Date de service</dt>
+        <dt class="col-sm-8">{{reservation.startTime | date: 'short' }}</dt>
+        <dt class="col-sm-4">De </dt>
+        <dt class="col-sm-8">{{reservation.startTime | date: 'HH:mm' }} à {{reservation.endTime | date: 'HH:mm' }}</dt>
+        <dt class="col-sm-4">Prix par heure</dt>
+        <dt class="col-sm-8">{{reservation.expertise.hourlyRate }} €</dt>
+        <dt class="col-sm-4">Prix total</dt>
+        <dt class="col-sm-8">{{reservation.totalCost }} €</dt>
+      </dl>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-outline-danger" (click)="modal.close('Close click')">Annuler</button>
+      <button type="button" class="btn btn-outline-success" (click)="sendOrder()">Confirmer votre commande</button>
+    </div>
+  </ng-template>
 </div>
 <app-footer></app-footer>

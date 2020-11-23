@@ -20,5 +20,7 @@
   "number": "Numéro",
   "city": "Commune",
   "zipcode": "Code postal",
-  "register": "Enregistrer"
+  "register": "Enregistrer",
+  "expertise": "Expertise",
+  "service_date": "Date d'execution"
 }

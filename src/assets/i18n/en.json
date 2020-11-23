@@ -20,5 +20,7 @@
   "number": "Number",
   "city": "City",
   "zipcode": "Postal code",
-  "register": "Register"
+  "register": "Register",
+  "expertise": "Expertise",
+  "service_date": "Service Date"
 }

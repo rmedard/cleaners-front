@@ -5,6 +5,6 @@ export interface Customer {
   id: number;
   userId: number;
   user: User;
-  reservations: Reservation[];
+  reservations?: Reservation[];
   isActive: boolean;
 }

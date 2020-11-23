@@ -19,7 +19,7 @@
           <a class="nav-link" [routerLink]="['/services']">{{'our_services' | translate}}</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" [routerLink]="['/become-member']">{{'become_member' | translate}}</a>
+          <a class="nav-link" [routerLink]="['/become-member']" *ngIf="!userLoggedIn">{{'become_member' | translate}}</a>
         </li>
         <li class="nav-item">
           <a class="nav-link" [routerLink]="['/contact']">{{'contact_us' | translate}}</a>
