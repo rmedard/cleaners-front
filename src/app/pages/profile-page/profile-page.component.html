@@ -77,7 +77,8 @@
               <td>
                 <div class="btn-toolbar" role="toolbar">
                   <div class="btn-group btn-group-sm mr-2" role="group" aria-label="Actions group">
-                    <button class="btn btn-outline-warning" (click)="openModal(true, template, expertise)">Edit</button>
+<!--                    <button class="btn btn-outline-warning" (click)="openModal(true, template, expertise)">Edit</button>-->
+                    <button class="btn btn-outline-warning" (click)="open(template)">Edit</button>
                   </div>
                 </div>
               </td>
@@ -112,6 +113,39 @@
         </div>
       </div>
     </main>
+
+    <ng-template #template let-modal>
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">Expertise</h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="modal.dismiss('Cross click')">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="expertiseForm" (ngSubmit)="onSaveExpertise()">
+          <div class="form-group row">
+            <label for="professionTitle" class="col-form-label col-sm-3">Profession</label>
+            <div class="input-group col-sm-9">
+              <select class="custom-select" id="professionTitle" formControlName="professionId" readonly>
+                <option *ngFor="let profession of services" [value]="profession.id">{{profession.title}}</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="expertiseRate" class="col-form-label col-sm-3">Rate</label>
+            <div class="input-group col-sm-9">
+              <input type="text" class="form-control" id="expertiseRate"
+                     formControlName="rate">
+              <div class="input-group-append">
+                <span class="input-group-text">€</span>
+              </div>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary" [disabled]="!expertiseForm.valid">Save</button>
+        </form>
+      </div>
+    </ng-template>
+
   </div>
 </div>
 <app-footer></app-footer>
