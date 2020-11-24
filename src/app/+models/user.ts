@@ -2,6 +2,7 @@ import {Address} from './address';
 import {RoleUser} from './role-user';
 
 export interface User {
+  userId: number;
   email: string;
   firstName: string;
   lastName: string;
@@ -9,7 +10,6 @@ export interface User {
   addressId: number;
   address: Address;
   picture: string;
-  userId: number;
   roles: RoleUser[];
 }
 

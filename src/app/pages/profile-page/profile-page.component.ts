@@ -1,4 +1,4 @@
-import {Component, OnInit, TemplateRef} from '@angular/core';
+import {Component, NgZone, OnInit, TemplateRef} from '@angular/core';
 import {AuthService} from '../../+services/auth.service';
 import {User} from '../../+models/user';
 import {Customer} from '../../+models/customer';
@@ -12,8 +12,12 @@ import {faEuroSign} from '@fortawesome/free-solid-svg-icons';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {ServicesService} from '../../+services/services.service';
 import {Service} from '../../+models/service';
-import {Expertise} from '../../+models/expertise';
 import {ModalDismissReasons, NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import {FileUploader, FileUploaderOptions, ParsedResponseHeaders} from 'ng2-file-upload';
+import {environment} from '../../../environments/environment';
+import CloudinaryConfiguration from '@cloudinary/angular-5.x/lib/cloudinary-configuration.class';
+import {UsersService} from '../../+services/users.service';
+import {LoggedInUser} from '../../+models/dto/logged-in-user';
 
 @Component({
   selector: 'app-profile-page',
@@ -30,13 +34,19 @@ export class ProfilePageComponent implements OnInit {
   expertiseForm: FormGroup;
   services: Service[];
   closeResult = '';
+  cloudinary = environment.cloudinaryConfig as CloudinaryConfiguration;
+
+  private hasBaseDropZoneOver = false;
+  public uploader: FileUploader;
+  private title = 'anyTitle';
 
   constructor(private authService: AuthService,
               private professionalsService: ProfessionalsService,
               private servicesService: ServicesService,
               private customersService: CustomersService,
               private formBuilder: FormBuilder,
-              private modalService: NgbModal) {
+              private modalService: NgbModal,
+              private usersService: UsersService) {
   }
 
   ngOnInit(): void {
@@ -61,6 +71,43 @@ export class ProfilePageComponent implements OnInit {
         this.services = data as Service[];
       });
     }
+
+    const uploaderOptions: FileUploaderOptions = {
+      url: `https://api.cloudinary.com/v1_1/${this.cloudinary.cloud_name}/upload`,
+      autoUpload: true,
+      isHTML5: true,
+      removeAfterUpload: true,
+      headers: [
+        {
+          name: 'X-Requested-With',
+          value: 'XMLHttpRequest'
+        }
+      ]
+    };
+    this.uploader = new FileUploader(uploaderOptions);
+
+    this.uploader.onBuildItemForm = (fileItem: any, form: FormData): any => {
+      form.append('upload_preset', this.cloudinary.upload_preset);
+      let tags = 'myphotoalbum';
+      if (this.title) {
+        form.append('context', `photo=${this.title}`);
+        tags = `myphotoalbum,${this.title}`;
+      }
+      form.append('folder', 'angular_sample');
+      form.append('tags', tags);
+      form.append('file', fileItem);
+
+      fileItem.withCredentials = false;
+      return {fileItem, form};
+    };
+
+    this.uploader.onSuccessItem = (item: any, response: string, status: number, headers: ParsedResponseHeaders) => {
+      this.user.picture = JSON.parse(response).url;
+      this.usersService.updateUser(this.user).subscribe(data => {
+        loggedInUser.userAccount.user = this.user;
+        localStorage.setItem('user', JSON.stringify(loggedInUser as LoggedInUser));
+      });
+    };
   }
 
   onClosed(dismissedAlert: Alert): void {
@@ -73,25 +120,6 @@ export class ProfilePageComponent implements OnInit {
 
   onSaveExpertise(): void {
     console.log('Save expertise called...');
-  }
-
-  openModal(editMode: boolean, template: TemplateRef<any>, expertise: Expertise): void {
-    // this.expertiseForm.controls['editMode'].setValue(editMode);
-    // this.dropDownProfessions = this.professions;
-    // this.selectedExpertise = expertise;
-    // if (editMode) {
-    //   this.expertiseForm.controls['professionId'].setValue(expertise.profession.id);
-    //   this.expertiseForm.controls['rate'].setValue(expertise.unitPrice);
-    //   this.expertiseForm.controls['professionId'].disable();
-    // } else {
-    //   // Remove already owned professions
-    //   this.dropDownProfessions = _.filter(this.professions, data => {
-    //     return !_.findWhere(_.map(this.professional.expertises, function (data1) {
-    //       return data1.profession;
-    //     }), data);
-    //   });
-    // }
-    // this.expertiseModalRef = this.modalService.show(expertiseTemplate);
   }
 
   open(template: TemplateRef<any>): void {

@@ -26,6 +26,10 @@ import {ProfilePageComponent} from './pages/profile-page/profile-page.component'
 import {TranslateLoader, TranslateModule} from '@ngx-translate/core';
 import {TranslateHttpLoader} from '@ngx-translate/http-loader';
 import {AuthInterceptorService} from './+interceptors/auth-interceptor.service';
+import {Cloudinary, CloudinaryModule} from '@cloudinary/angular-5.x';
+
+import {FileUploadModule} from 'ng2-file-upload';
+import {environment} from '../environments/environment';
 
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
@@ -53,6 +57,8 @@ export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
     RouterModule.forRoot(appRoutes),
     CarouselModule, HttpClientModule, FontAwesomeModule,
     ReactiveFormsModule, BrowserAnimationsModule, NgbModule, Ng5SliderModule, JwtModule,
+    CloudinaryModule.forRoot({Cloudinary}, environment.cloudinaryConfig),
+    FileUploadModule,
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,

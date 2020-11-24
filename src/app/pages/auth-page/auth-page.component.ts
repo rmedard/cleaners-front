@@ -4,7 +4,7 @@ import {AuthService} from '../../+services/auth.service';
 import {LoggedInUser} from '../../+models/dto/logged-in-user';
 import {Alert} from '../../+models/dto/alert';
 import {Router} from '@angular/router';
-import {TranslateService} from '@ngx-translate/core';
+import {HttpErrorResponse} from '@angular/common/http';
 
 @Component({
   selector: 'app-auth-page',
@@ -17,8 +17,7 @@ export class AuthPageComponent implements OnInit {
 
   constructor(private formBuilder: FormBuilder,
               private authService: AuthService,
-              private router: Router,
-              private translateService: TranslateService) {
+              private router: Router) {
   }
 
   ngOnInit(): void {
@@ -37,21 +36,12 @@ export class AuthPageComponent implements OnInit {
         this.router.navigate(['/profile']).then(() => {
           window.location.reload();
         });
-        this.translateService.getTranslation('msg_login_success').subscribe(message => {
-          this.alerts.push({
-            type: 'success',
-            msg: message,
-            dismissible: true
-          } as Alert);
-        });
       }, error => {
-        this.translateService.getTranslation('msg_login_fail').subscribe(message => {
-          this.alerts.push({
-            type: 'danger',
-            msg: message,
-            dismissible: true
-          } as Alert);
-        });
+        this.alerts.push({
+          type: 'danger',
+          msg: 'Login failed. ' + (error as HttpErrorResponse).error,
+          dismissible: true
+        } as Alert);
       });
     }
   }

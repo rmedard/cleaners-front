@@ -2,11 +2,19 @@
 // `ng build --prod` replaces `environment.ts` with `environment.prod.ts`.
 // The list of file replacements can be found in `angular.json`.
 
+import CloudinaryConfiguration from '@cloudinary/angular-5.x/lib/cloudinary-configuration.class';
+
 export const environment = {
   production: false,
   apiUrl: 'http://localhost:5001/api',
   workingHourMin: 8,
-  workingHourMax: 20
+  workingHourMax: 20,
+  cloudinaryConfig: {
+    cloud_name: 'eurekacloud',
+    upload_preset: 'dgxq7gom',
+    api_key: '517876783793992',
+    api_secret: 'MIl9nYKYWR8m_wcyC5wWTAFQinw'
+  } as CloudinaryConfiguration
 };
 
 /*

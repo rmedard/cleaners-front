@@ -11,8 +11,18 @@
       <div class="row">
         <div class="col-md-3">
           <div class="card mb-3">
-            <img class="card-img-top" src="../../../assets/unknown.png" alt="Card image cap">
-            <div class="card-body">
+            <div class="p-4">
+              <img class="card-img-top rounded-circle shadow-lg" src="{{user.picture}}" alt="Card image cap" *ngIf="user.picture">
+              <img class="card-img-top rounded-circle shadow-lg" src="../../../assets/unknown.png" alt="Card image cap" *ngIf="!user.picture">
+            </div>
+            <div class="input-group">
+              <button (click)="fileInput.click()" class="btn btn-sm btn-outline-success btn-block m-2">Changer votre photo</button>
+              <input type="file" ng2FileSelect #fileInput
+                     [uploader]="uploader"
+                     accept="image/*"
+                     [style.display]="'none'">
+            </div>
+            <div class="card-body p-2">
               <span class="badge badge-success" *ngFor="let roleUser of user.roles">{{roleUser.role.roleName}}</span>
             </div>
           </div>
