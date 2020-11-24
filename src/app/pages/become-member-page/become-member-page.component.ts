@@ -112,7 +112,8 @@ export class BecomeMemberPageComponent implements OnInit {
         const rate = formGroup.controls.regHourlyRate.value as number;
         newProfessional.expertises.push({
           service: serv,
-          hourlyRate: rate
+          hourlyRate: rate,
+          isActive: true
         } as Expertise);
       });
       this.professionalsService.createProfessional({

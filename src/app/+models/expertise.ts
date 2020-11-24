@@ -8,4 +8,5 @@ export interface Expertise {
   hourlyRate: number;
   service: Service;
   professional: Professional;
+  isActive: boolean;
 }

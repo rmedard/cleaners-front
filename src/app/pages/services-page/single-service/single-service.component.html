@@ -98,16 +98,33 @@
       </button>
     </div>
     <div class="modal-body">
-      <dl class="row">
-        <dt class="col-sm-4">Date de service</dt>
-        <dt class="col-sm-8">{{reservation.startTime | date: 'short' }}</dt>
-        <dt class="col-sm-4">De </dt>
-        <dt class="col-sm-8">{{reservation.startTime | date: 'HH:mm' }} à {{reservation.endTime | date: 'HH:mm' }}</dt>
-        <dt class="col-sm-4">Prix par heure</dt>
-        <dt class="col-sm-8">{{reservation.expertise.hourlyRate }} €</dt>
-        <dt class="col-sm-4">Prix total</dt>
-        <dt class="col-sm-8">{{reservation.totalCost }} €</dt>
-      </dl>
+      <div class="row">
+        <div class="col-md-6">
+          <dl class="row">
+            <dt class="col-sm-4">Date de service</dt>
+            <dt class="col-sm-8">{{reservation.startTime | date: 'short' }}</dt>
+            <dt class="col-sm-4">De </dt>
+            <dt class="col-sm-8">{{reservation.startTime | date: 'HH:mm' }} à {{reservation.endTime | date: 'HH:mm' }}</dt>
+            <dt class="col-sm-4">Prix par heure</dt>
+            <dt class="col-sm-8">{{reservation.expertise.hourlyRate }} €</dt>
+            <dt class="col-sm-4">Prix total</dt>
+            <dt class="col-sm-8">{{reservation.totalCost }} €</dt>
+          </dl>
+        </div>
+        <div class="col-md-6">
+          <div class="btn-group btn-group-toggle" ngbRadioGroup name="radioBasic" [(ngModel)]="recurrence">
+            <label ngbButtonLabel class="btn-outline-dark">
+              <input ngbButton type="radio" value="n"> Une seule fois
+            </label>
+            <label ngbButtonLabel class="btn-outline-dark">
+              <input ngbButton type="radio" value="d"> Tous les jours
+            </label>
+            <label ngbButtonLabel class="btn-outline-dark">
+              <input ngbButton type="radio" value="w"> Toutes les semaines
+            </label>
+          </div>
+        </div>
+      </div>
     </div>
     <div class="modal-footer">
       <button type="button" class="btn btn-outline-danger" (click)="modal.close('Close click')">Annuler</button>

@@ -16,7 +16,7 @@ import {HTTP_INTERCEPTORS, HttpClient, HttpClientModule} from '@angular/common/h
 import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
 import {EllipsisPipe} from './+utils/ellipsis-pipe';
 import {SingleServiceComponent} from './pages/services-page/single-service/single-service.component';
-import {ReactiveFormsModule} from '@angular/forms';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {Ng5SliderModule} from 'ng5-slider';
@@ -58,7 +58,7 @@ export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
     CarouselModule, HttpClientModule, FontAwesomeModule,
     ReactiveFormsModule, BrowserAnimationsModule, NgbModule, Ng5SliderModule, JwtModule,
     CloudinaryModule.forRoot({Cloudinary}, environment.cloudinaryConfig),
-    FileUploadModule,
+    FileUploadModule, FormsModule,
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,

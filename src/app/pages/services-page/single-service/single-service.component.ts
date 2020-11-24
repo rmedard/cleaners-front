@@ -20,6 +20,7 @@ import {AuthService} from '../../../+services/auth.service';
 import {ReservationForCreate} from '../../../+models/dto/reservation-for-create';
 import {ReservationService} from '../../../+services/reservation.service';
 import {Alert} from '../../../+models/dto/alert';
+import {Label, Recurrence} from '../../../+models/recurrence';
 
 @Component({
   selector: 'app-single-service',
@@ -41,6 +42,7 @@ export class SingleServiceComponent implements OnInit {
   availableExpertises = {} as AvailableExpertiseSearchDto;
   reservation: Reservation = {} as Reservation;
   alerts: Alert[] = [];
+  recurrence: string;
 
   constructor(private route: ActivatedRoute,
               private professionalsService: ProfessionalsService,
@@ -52,6 +54,7 @@ export class SingleServiceComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.recurrence = 'n';
     this.options = this.sliderOptions(new Date());
     this.startHour = this.options.floor;
     this.endHour = this.options.floor + 1;
@@ -155,6 +158,12 @@ export class SingleServiceComponent implements OnInit {
       startTime: this.reservation.startTime,
       duration: range[1] - range[0]
     } as ReservationForCreate;
+    if (this.recurrence !== 'n') {
+      reservationForCreate.recurrence = {
+        label: this.recurrence,
+        isActive: true,
+      } as Recurrence;
+    }
     this.reservationsService.createOrder(reservationForCreate).subscribe(data => {
       console.log(data);
       this.alerts.push({
