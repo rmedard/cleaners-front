@@ -96,6 +96,7 @@ export class SingleServiceComponent implements OnInit {
 
   findExpertises(): void {
     const searchDto = new AvailableExpertiseSearch(this.filterForm, this.dateFormatter, this.service.id);
+    console.log(searchDto);
     this.professionalsService.getAvailable(searchDto).subscribe(expertises => {
       this.expertises = expertises;
     });

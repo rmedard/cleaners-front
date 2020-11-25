@@ -8,8 +8,8 @@ import {CustomersService} from '../../+services/customers.service';
 import {Alert} from '../../+models/dto/alert';
 import * as moment from 'moment';
 import {Reservation} from '../../+models/reservation';
-import {faEuroSign} from '@fortawesome/free-solid-svg-icons';
-import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {faEuroSign, faPlus, faPlusCircle} from '@fortawesome/free-solid-svg-icons';
+import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {ServicesService} from '../../+services/services.service';
 import {Service} from '../../+models/service';
 import {ModalDismissReasons, NgbModal} from '@ng-bootstrap/ng-bootstrap';
@@ -33,12 +33,15 @@ export class ProfilePageComponent implements OnInit {
   euroIcon = faEuroSign;
   expertiseForm: FormGroup;
   services: Service[];
+  selectedServiceForEdit: Service = {} as Service;
   closeResult = '';
   cloudinary = environment.cloudinaryConfig as CloudinaryConfiguration;
 
   private hasBaseDropZoneOver = false;
   public uploader: FileUploader;
   private title = 'anyTitle';
+  serviceForm: FormGroup;
+  addIcon = faPlusCircle;
 
   constructor(private authService: AuthService,
               private professionalsService: ProfessionalsService,
@@ -52,6 +55,9 @@ export class ProfilePageComponent implements OnInit {
   ngOnInit(): void {
     const loggedInUser = this.authService.getLoggedInUser();
     this.user = loggedInUser.userAccount.user;
+    this.servicesService.getServices().subscribe(data => {
+      this.services = data as Service[];
+    });
     if (loggedInUser.userAccount.customerId > 0) {
       this.customersService.getCustomer(loggedInUser.userAccount.customerId).subscribe(data => {
         this.customer = data as Customer;
@@ -66,9 +72,6 @@ export class ProfilePageComponent implements OnInit {
           professionId: [null, Validators.required],
           rate: [0.00, [Validators.pattern('^[0-9]+(\\.[0-9]{1,2})?$')]]
         });
-      });
-      this.servicesService.getServices().subscribe(data => {
-        this.services = data as Service[];
       });
     }
 
@@ -138,5 +141,27 @@ export class ProfilePageComponent implements OnInit {
     } else {
       return `with: ${reason}`;
     }
+  }
+
+  hasRole(roleName: string): boolean {
+    return this.user.roles.map(r => r.role.roleName).filter(x => x === roleName).length > 0;
+  }
+
+  onSaveService(): void {
+
+  }
+
+  editService(serviceTemplate: any, service: Service): void {
+    this.selectedServiceForEdit = service;
+    this.serviceForm = this.formBuilder.group({
+      titleField: new FormControl(this.selectedServiceForEdit.title, [Validators.required]),
+      descriptionField: new FormControl(this.selectedServiceForEdit.category),
+      categoryField: new FormControl(this.selectedServiceForEdit.category, [Validators.required])
+    });
+    this.modalService.open(serviceTemplate, {size: 'sm'});
+  }
+
+  deleteService(serviceTemplate: TemplateRef<any>, service: Service): void {
+
   }
 }

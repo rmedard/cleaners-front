@@ -96,7 +96,7 @@
             </tr>
             </tbody>
           </table>
-          <nav class="navbar navbar-light bg-light">
+          <nav class="navbar navbar-light bg-light" *ngIf="customer">
             <span class="display-4">Orders</span>
           </nav>
           <table class="table table-hover" *ngIf="customer">
@@ -123,6 +123,57 @@
             </tr>
             </tbody>
           </table>
+
+          <div *ngIf="hasRole('Admin')" class="mt-3">
+            <h3 class="text-center">Admin Panel</h3>
+
+            <ul class="nav nav-tabs" id="myTab" role="tablist">
+              <li class="nav-item">
+                <a class="nav-link active" id="services-tab" data-toggle="tab" href="#services" role="tab" aria-controls="services" aria-selected="true">Services</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" id="bills-tab" data-toggle="tab" href="#bills" role="tab" aria-controls="bills" aria-selected="false">Factures</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" id="reservations-tab" data-toggle="tab" href="#reservations" role="tab" aria-controls="reservations" aria-selected="false">Reservations</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" id="users-tab" data-toggle="tab" href="#users" role="tab" aria-controls="users" aria-selected="false">Utilisateurs</a>
+              </li>
+            </ul>
+            <div class="tab-content" id="myTabContent">
+              <div class="tab-pane fade show active" id="services" role="tabpanel" aria-labelledby="services-tab">
+                <button class="btn btn-sm btn-success mt-3 mb-1"><fa-icon [icon]="addIcon"></fa-icon> Add service</button>
+                <table class="table table-hover">
+                  <thead class="thead-dark">
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Title</th>
+                    <th scope="col">Description</th>
+                    <th scope="col">Categorie</th>
+                    <th scope="col">Actions</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  <tr *ngFor="let service of services; let i = index">
+                    <th scope="row">{{ i + 1 }}</th>
+                    <td>{{ service.title }}</td>
+                    <td>{{ service.description }}</td>
+                    <td>{{ service.category }}</td>
+                    <td>
+                      <button class="btn btn-outline-success btn-sm mr-2" (click)="editService(serviceTemplate, service)">Edit</button>
+                      <button class="btn btn-outline-danger btn-sm mr-2" (click)="deleteService(serviceTemplate, service)">Delete</button>
+                    </td>
+                  </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="tab-pane fade" id="bills" role="tabpanel" aria-labelledby="bills-tab">billes here...</div>
+              <div class="tab-pane fade" id="reservations" role="tabpanel" aria-labelledby="reservations-tab">reservations here ...</div>
+              <div class="tab-pane fade" id="users" role="tabpanel" aria-labelledby="users-tab">utilisateurs here ...</div>
+            </div>
+
+          </div>
         </div>
       </div>
     </main>
@@ -147,8 +198,7 @@
           <div class="form-group row">
             <label for="expertiseRate" class="col-form-label col-sm-3">Rate</label>
             <div class="input-group col-sm-9">
-              <input type="text" class="form-control" id="expertiseRate"
-                     formControlName="rate">
+              <input type="text" class="form-control" id="expertiseRate" formControlName="rate">
               <div class="input-group-append">
                 <span class="input-group-text">€</span>
               </div>
@@ -159,6 +209,26 @@
       </div>
     </ng-template>
 
+    <ng-template #serviceTemplate let-serviceModal>
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">Service</h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="serviceModal.dismiss('Cross click')">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="serviceForm" (ngSubmit)="onSaveService()">
+          <div class="form-group">
+            <label for="titleField">Title</label>
+            <input type="text" class="form-control" id="titleField" formControlName="titleField">
+          </div>
+          <div class="form-group">
+            <label for="descriptionField">Description</label>
+            <input type="text" class="form-control" id="descriptionField" formControlName="descriptionField">
+          </div>
+        </form>
+      </div>
+    </ng-template>
   </div>
 </div>
 <app-footer></app-footer>
