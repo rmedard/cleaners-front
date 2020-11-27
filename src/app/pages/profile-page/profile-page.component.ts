@@ -1,4 +1,4 @@
-import {Component, NgZone, OnInit, TemplateRef} from '@angular/core';
+import {Component, OnInit, TemplateRef} from '@angular/core';
 import {AuthService} from '../../+services/auth.service';
 import {User} from '../../+models/user';
 import {Customer} from '../../+models/customer';
@@ -8,16 +8,17 @@ import {CustomersService} from '../../+services/customers.service';
 import {Alert} from '../../+models/dto/alert';
 import * as moment from 'moment';
 import {Reservation} from '../../+models/reservation';
-import {faEuroSign, faPlus, faPlusCircle} from '@fortawesome/free-solid-svg-icons';
+import {faEuroSign, faPlusCircle} from '@fortawesome/free-solid-svg-icons';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {ServicesService} from '../../+services/services.service';
-import {Service} from '../../+models/service';
+import {Category, Service} from '../../+models/service';
 import {ModalDismissReasons, NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {FileUploader, FileUploaderOptions, ParsedResponseHeaders} from 'ng2-file-upload';
 import {environment} from '../../../environments/environment';
 import CloudinaryConfiguration from '@cloudinary/angular-5.x/lib/cloudinary-configuration.class';
 import {UsersService} from '../../+services/users.service';
 import {LoggedInUser} from '../../+models/dto/logged-in-user';
+import {Expertise} from '../../+models/expertise';
 
 @Component({
   selector: 'app-profile-page',
@@ -36,6 +37,7 @@ export class ProfilePageComponent implements OnInit {
   selectedServiceForEdit: Service = {} as Service;
   closeResult = '';
   cloudinary = environment.cloudinaryConfig as CloudinaryConfiguration;
+  expertiseToEdit: Expertise;
 
   private hasBaseDropZoneOver = false;
   public uploader: FileUploader;
@@ -67,9 +69,6 @@ export class ProfilePageComponent implements OnInit {
       this.professionalsService.getProfessional(loggedInUser.userAccount.professionalId).subscribe(data => {
         this.professional = data as Professional;
         this.expertiseForm = this.formBuilder.group({
-          editMode: [false],
-          professionalId: [this.professional.id],
-          professionId: [null, Validators.required],
           rate: [0.00, [Validators.pattern('^[0-9]+(\\.[0-9]{1,2})?$')]]
         });
       });
@@ -111,6 +110,12 @@ export class ProfilePageComponent implements OnInit {
         localStorage.setItem('user', JSON.stringify(loggedInUser as LoggedInUser));
       });
     };
+
+    this.serviceForm = this.formBuilder.group({
+      titleField: new FormControl(this.selectedServiceForEdit.title, [Validators.required]),
+      descriptionField: new FormControl(this.selectedServiceForEdit.description, [Validators.required]),
+      categoryField: new FormControl(this.selectedServiceForEdit.category, [Validators.required])
+    });
   }
 
   onClosed(dismissedAlert: Alert): void {
@@ -122,10 +127,29 @@ export class ProfilePageComponent implements OnInit {
   }
 
   onSaveExpertise(): void {
-    console.log('Save expertise called...');
+    this.expertiseToEdit.hourlyRate = this.expertiseForm.controls.rate.value;
+    console.log(this.expertiseToEdit);
+    this.professionalsService.updateExpertise(this.expertiseToEdit).subscribe(() => {
+      this.alerts.push({
+        type: 'success',
+        msg: 'Expertise updated successfully.',
+        dismissible: true
+      } as Alert);
+    }, error => {
+      this.alerts.push({
+        type: 'danger',
+        msg: 'Expertise updated failed.',
+        dismissible: true
+      } as Alert);
+    });
+    this.modalService.dismissAll();
   }
 
-  open(template: TemplateRef<any>): void {
+  onEditExpertise(template: TemplateRef<any>, expertise: Expertise): void {
+    this.expertiseToEdit = expertise;
+    this.expertiseForm = this.formBuilder.group({
+      rate: [expertise.hourlyRate, [Validators.pattern('^[0-9]+(\\.[0-9]{1,2})?$'), Validators.min(0.0), Validators.required]]
+    });
     this.modalService.open(template, {ariaLabelledBy: 'modal-basic-title'}).result.then((result) => {
       this.closeResult = `Closed with: ${result}`;
     }, (reason) => {
@@ -148,20 +172,62 @@ export class ProfilePageComponent implements OnInit {
   }
 
   onSaveService(): void {
-
+    this.selectedServiceForEdit.category = this.serviceForm.controls.categoryField.value;
+    this.selectedServiceForEdit.description = this.serviceForm.controls.descriptionField.value;
+    this.selectedServiceForEdit.title = this.serviceForm.controls.titleField.value;
+    this.modalService.dismissAll();
+    if (this.selectedServiceForEdit.id) {
+      this.servicesService.updateService(this.selectedServiceForEdit).subscribe(() => {
+        this.services.filter(s => s.id === this.selectedServiceForEdit.id)[0] = this.selectedServiceForEdit;
+        this.alerts.push({
+          type: 'success',
+          msg: 'Service updated successfully.',
+          dismissible: true
+        } as Alert);
+        }, error => {
+        this.alerts.push({
+          type: 'danger',
+          msg: 'Service updated failed.',
+          dismissible: true
+        } as Alert);
+      });
+    } else {
+      this.servicesService.createService(this.selectedServiceForEdit).subscribe(data => {
+        this.alerts.push({
+          type: 'success',
+          msg: 'Service created successfully.',
+          dismissible: true
+        } as Alert);
+        this.services.push(data as Service);
+      }, error => {
+        this.alerts.push({
+          type: 'danger',
+          msg: 'Service creation failed.',
+          dismissible: true
+        } as Alert);
+      });
+    }
   }
 
   editService(serviceTemplate: any, service: Service): void {
     this.selectedServiceForEdit = service;
-    this.serviceForm = this.formBuilder.group({
-      titleField: new FormControl(this.selectedServiceForEdit.title, [Validators.required]),
-      descriptionField: new FormControl(this.selectedServiceForEdit.category),
-      categoryField: new FormControl(this.selectedServiceForEdit.category, [Validators.required])
-    });
-    this.modalService.open(serviceTemplate, {size: 'sm'});
+    this.serviceForm.controls.titleField.setValue(service.title);
+    this.serviceForm.controls.descriptionField.setValue(service.description);
+    this.serviceForm.controls.categoryField.setValue(service.category);
+    this.modalService.open(serviceTemplate, {size: 'lg'});
   }
 
   deleteService(serviceTemplate: TemplateRef<any>, service: Service): void {
+
+  }
+
+  createService(serviceTemplate: TemplateRef<any>): void {
+    this.serviceForm.reset({categoryField: Category.INTERIOR});
+    this.selectedServiceForEdit = {category: Category.INTERIOR} as Service;
+    this.modalService.open(serviceTemplate, {size: 'lg'});
+  }
+
+  saveService(): void {
 
   }
 }

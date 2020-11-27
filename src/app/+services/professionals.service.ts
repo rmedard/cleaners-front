@@ -32,4 +32,8 @@ export class ProfessionalsService {
   getProfessional(professionalId: number): Observable<Professional> {
     return this.http.get<Professional>(`${this.baseUrl}/Professionals/${professionalId}`, httpOptions);
   }
+
+  updateExpertise(expertise: Expertise): Observable<void> {
+    return this.http.put<void>(`${this.baseUrl}/Expertises/${expertise.id}`, expertise, httpOptions);
+  }
 }

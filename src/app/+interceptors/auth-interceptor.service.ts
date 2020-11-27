@@ -13,9 +13,10 @@ export class AuthInterceptorService implements HttpInterceptor {
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     if (this.authService.loggedIn()) {
+      const token = this.authService.getLoggedInUser().token;
       req = req.clone({
         setHeaders: {
-          Authorization: `Bearer ${this.authService.getLoggedInUser().token}`
+          Authorization: `Bearer ${token}`
         }
       });
     }

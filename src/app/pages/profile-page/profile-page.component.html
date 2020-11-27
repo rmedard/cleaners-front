@@ -68,7 +68,7 @@
               </div>
             </div>
           </div>
-
+          <h3 class="text-center">Vos expertises</h3>
           <table class="table table-hover" *ngIf="professional">
             <thead class="thead-dark">
             <tr>
@@ -88,8 +88,8 @@
               <td>
                 <div class="btn-toolbar" role="toolbar">
                   <div class="btn-group btn-group-sm mr-2" role="group" aria-label="Actions group">
-                    <!--                    <button class="btn btn-outline-warning" (click)="openModal(true, template, expertise)">Edit</button>-->
-                    <button class="btn btn-outline-warning" (click)="open(template)">Edit</button>
+                    <button class="btn btn-outline-success" (click)="onEditExpertise(expertiseTemplate, expertise)">Edit</button>
+                    <button class="btn btn-outline-danger">Cancel</button>
                   </div>
                 </div>
               </td>
@@ -143,7 +143,7 @@
             </ul>
             <div class="tab-content" id="myTabContent">
               <div class="tab-pane fade show active" id="services" role="tabpanel" aria-labelledby="services-tab">
-                <button class="btn btn-sm btn-success mt-3 mb-1"><fa-icon [icon]="addIcon"></fa-icon> Add service</button>
+                <button class="btn btn-sm btn-success mt-3 mb-1" (click)="createService(serviceTemplate)"><fa-icon [icon]="addIcon"></fa-icon> Add service</button>
                 <table class="table table-hover">
                   <thead class="thead-dark">
                   <tr>
@@ -161,8 +161,8 @@
                     <td>{{ service.description }}</td>
                     <td>{{ service.category }}</td>
                     <td>
-                      <button class="btn btn-outline-success btn-sm mr-2" (click)="editService(serviceTemplate, service)">Edit</button>
-                      <button class="btn btn-outline-danger btn-sm mr-2" (click)="deleteService(serviceTemplate, service)">Delete</button>
+                      <button class="btn btn-outline-success btn-sm mr-2 btn-block" (click)="editService(serviceTemplate, service)">Edit</button>
+                      <button class="btn btn-outline-danger btn-sm mr-2 btn-block" (click)="deleteService(serviceTemplate, service)">Delete</button>
                     </td>
                   </tr>
                   </tbody>
@@ -178,22 +178,18 @@
       </div>
     </main>
 
-    <ng-template #template let-modal>
+    <ng-template #expertiseTemplate let-expertiseModal>
       <div class="modal-header">
         <h4 class="modal-title pull-left">Expertise</h4>
-        <button type="button" class="close pull-right" aria-label="Close" (click)="modal.dismiss('Cross click')">
+        <button type="button" class="close pull-right" aria-label="Close" (click)="expertiseModal.dismiss('Cross click')">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <div class="modal-body">
         <form [formGroup]="expertiseForm" (ngSubmit)="onSaveExpertise()">
           <div class="form-group row">
-            <label for="professionTitle" class="col-form-label col-sm-3">Profession</label>
-            <div class="input-group col-sm-9">
-              <select class="custom-select" id="professionTitle" formControlName="professionId" readonly>
-                <option *ngFor="let profession of services" [value]="profession.id">{{profession.title}}</option>
-              </select>
-            </div>
+            <label class="col-form-label col-sm-3" for="expertiseServiceTitle">Service: </label>
+            <div class="col-sm-9" id="expertiseServiceTitle">{{expertiseToEdit.service.title}}</div>
           </div>
           <div class="form-group row">
             <label for="expertiseRate" class="col-form-label col-sm-3">Rate</label>
@@ -224,7 +220,22 @@
           </div>
           <div class="form-group">
             <label for="descriptionField">Description</label>
-            <input type="text" class="form-control" id="descriptionField" formControlName="descriptionField">
+            <textarea type="text" class="form-control" id="descriptionField" formControlName="descriptionField" rows="3"></textarea>
+          </div>
+          <div class="form-group">
+            <div class="form-check">
+              <input type="radio" value="Interieur" formControlName="categoryField" class="form-check-input" id="interieur-input">
+              <label for="interieur-input">Interieur</label>
+            </div>
+            <div class="form-check">
+              <input type="radio" value="Exterieur" formControlName="categoryField" class="form-check-input" id="exterieur-input">
+              <label for="exterieur-input">Exterieur</label>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="col">
+              <button type="submit" class="btn btn-primary" [disabled]="!serviceForm.valid">{{'register' | translate}}</button>
+            </div>
           </div>
         </form>
       </div>
