@@ -82,7 +82,8 @@
             <div class="col-4 text-center d-flex flex-column justify-content-center">
               <span class="badge badge-pill badge-light mb-2" style="font-size: 0.9em">{{expertise.hourlyRate}}
                 €/Heure</span>
-              <button type="button" class="btn btn-outline-success btn-sm" (click)="order(content, expertise)">Commander</button>
+              <button type="button" class="btn btn-outline-success btn-sm" (click)="order(content, expertise)"
+                      [disabled]="!isCustomer">Commander</button>
             </div>
           </div>
         </div>

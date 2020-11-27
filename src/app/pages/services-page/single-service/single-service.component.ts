@@ -43,6 +43,7 @@ export class SingleServiceComponent implements OnInit {
   reservation: Reservation = {} as Reservation;
   alerts: Alert[] = [];
   recurrence: string;
+  isCustomer = true;
 
   constructor(private route: ActivatedRoute,
               private professionalsService: ProfessionalsService,
@@ -54,6 +55,9 @@ export class SingleServiceComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.isCustomer = this.authService.getLoggedInUser()
+      .userAccount.user.roles.map(r => r.role.roleName)
+      .filter(n => n === 'Customer').length > 0;
     this.recurrence = 'n';
     this.options = this.sliderOptions(new Date());
     this.startHour = this.options.floor;
@@ -154,7 +158,10 @@ export class SingleServiceComponent implements OnInit {
     const range = this.filterForm.controls.serviceHourRange.value as Array<number>;
     const reservationForCreate = {
       customerId: this.authService.getLoggedInUser().userAccount.customerId,
-      expertiseForServiceCreate: {professionalId: this.reservation.expertise.professionalId, serviceId: this.service.id},
+      expertiseForServiceCreate: {
+        professionalId: this.reservation.expertise.professionalId,
+        serviceId: this.service.id
+      },
       startTime: this.reservation.startTime,
       duration: range[1] - range[0]
     } as ReservationForCreate;
