@@ -19,6 +19,8 @@ import CloudinaryConfiguration from '@cloudinary/angular-5.x/lib/cloudinary-conf
 import {UsersService} from '../../+services/users.service';
 import {LoggedInUser} from '../../+models/dto/logged-in-user';
 import {Expertise} from '../../+models/expertise';
+import {ReservationService} from '../../+services/reservation.service';
+import {RoleUser} from '../../+models/role-user';
 
 @Component({
   selector: 'app-profile-page',
@@ -38,6 +40,8 @@ export class ProfilePageComponent implements OnInit {
   closeResult = '';
   cloudinary = environment.cloudinaryConfig as CloudinaryConfiguration;
   expertiseToEdit: Expertise;
+  reservations: Reservation[];
+  users: User[];
 
   private hasBaseDropZoneOver = false;
   public uploader: FileUploader;
@@ -48,6 +52,7 @@ export class ProfilePageComponent implements OnInit {
   constructor(private authService: AuthService,
               private professionalsService: ProfessionalsService,
               private servicesService: ServicesService,
+              private reservationsService: ReservationService,
               private customersService: CustomersService,
               private formBuilder: FormBuilder,
               private modalService: NgbModal,
@@ -71,6 +76,14 @@ export class ProfilePageComponent implements OnInit {
         this.expertiseForm = this.formBuilder.group({
           rate: [0.00, [Validators.pattern('^[0-9]+(\\.[0-9]{1,2})?$')]]
         });
+      });
+    }
+    if (this.user.roles.filter(r => r.role.roleName === 'Admin').length > 0) {
+      this.reservationsService.getReservations().subscribe(data => {
+        this.reservations = data;
+      });
+      this.usersService.getUsers().subscribe(data => {
+        this.users = data;
       });
     }
 

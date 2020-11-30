@@ -20,4 +20,8 @@ export class UsersService {
   updateUser(user: User): Observable<void> {
     return this.http.patch<void>(`${this.baseUrl}/Users/${user.userId}`, user, httpOptions);
   }
+
+  getUsers(): Observable<User[]> {
+    return this.http.get<User[]>(`${this.baseUrl}/Users`, httpOptions);
+  }
 }
