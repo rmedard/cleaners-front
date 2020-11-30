@@ -19,9 +19,9 @@ export class ServicesPageComponent implements OnInit {
 
   ngOnInit(): void {
     this.servicesService.getServices().subscribe(data => {
-      this.services = data;
-      this.exteriorServices = data.filter(d => d.category === Category.EXTERIOR);
-      this.interiorServices = data.filter(d => d.category === Category.INTERIOR);
+      this.services = data.filter(s => s.isActive);
+      this.exteriorServices = this.services.filter(d => d.category === Category.EXTERIOR);
+      this.interiorServices = this.services.filter(d => d.category === Category.INTERIOR);
     }, () => {
       this.alerts.push({
         type: 'danger',

@@ -188,4 +188,8 @@ export class SingleServiceComponent implements OnInit {
       this.modalService.dismissAll();
     });
   }
+
+  onClosed(dismissedAlert: Alert): void {
+    this.alerts = this.alerts.filter(alert => alert !== dismissedAlert);
+  }
 }

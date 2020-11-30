@@ -128,7 +128,6 @@ export class ProfilePageComponent implements OnInit {
 
   onSaveExpertise(): void {
     this.expertiseToEdit.hourlyRate = this.expertiseForm.controls.rate.value;
-    console.log(this.expertiseToEdit);
     this.professionalsService.updateExpertise(this.expertiseToEdit).subscribe(() => {
       this.alerts.push({
         type: 'success',
@@ -217,8 +216,28 @@ export class ProfilePageComponent implements OnInit {
     this.modalService.open(serviceTemplate, {size: 'lg'});
   }
 
-  deleteService(serviceTemplate: TemplateRef<any>, service: Service): void {
+  showDeleteServiceDialog(serviceTemplate: TemplateRef<any>, service: Service): void {
+    this.selectedServiceForEdit = service;
+    this.modalService.open(serviceTemplate, {size: 'sm'});
+  }
 
+  deleteService(): void {
+    this.selectedServiceForEdit.isActive = !this.selectedServiceForEdit.isActive;
+    this.servicesService.updateService(this.selectedServiceForEdit).subscribe(data => {
+      this.services.filter(s => s.id === this.selectedServiceForEdit.id)[0].isActive = this.selectedServiceForEdit.isActive;
+      this.alerts.push({
+        type: 'success',
+        msg: 'Service updated successfully.',
+        dismissible: true
+      } as Alert);
+    }, error => {
+      this.alerts.push({
+        type: 'danger',
+        msg: 'Service update failed.',
+        dismissible: true
+      } as Alert);
+    });
+    this.modalService.dismissAll();
   }
 
   createService(serviceTemplate: TemplateRef<any>): void {

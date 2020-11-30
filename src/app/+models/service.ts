@@ -3,6 +3,7 @@ export interface Service {
   title: string;
   description: string;
   category: Category;
+  isActive: boolean;
 }
 
 export enum Category {

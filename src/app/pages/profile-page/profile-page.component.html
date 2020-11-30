@@ -155,14 +155,14 @@
                   </tr>
                   </thead>
                   <tbody>
-                  <tr *ngFor="let service of services; let i = index">
+                  <tr *ngFor="let service of services; let i = index" class="{{service.isActive ? 'bg-success-light' : 'bg-danger-light'}}">
                     <th scope="row">{{ i + 1 }}</th>
                     <td>{{ service.title }}</td>
                     <td>{{ service.description }}</td>
                     <td>{{ service.category }}</td>
                     <td>
                       <button class="btn btn-outline-success btn-sm mr-2 btn-block" (click)="editService(serviceTemplate, service)">Edit</button>
-                      <button class="btn btn-outline-danger btn-sm mr-2 btn-block" (click)="deleteService(serviceTemplate, service)">Delete</button>
+                      <button class="btn btn-outline-danger btn-sm mr-2 btn-block" (click)="showDeleteServiceDialog(serviceDeleteTemplate, service)">{{service.isActive ? 'Deactivate' : 'Activate'}}</button>
                     </td>
                   </tr>
                   </tbody>
@@ -238,6 +238,29 @@
             </div>
           </div>
         </form>
+      </div>
+    </ng-template>
+
+    <ng-template #serviceDeleteTemplate let-serviceDeleteModal class="bg-danger">
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">{{selectedServiceForEdit.isActive ? 'Deactivate' : 'Activate' }} Service</h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="serviceDeleteModal.dismiss('Cross click')">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        {{selectedServiceForEdit.isActive ? 'Deactivate' : 'Activate' }} service:
+        <h4>{{selectedServiceForEdit.title}} ?</h4>
+      </div>
+      <div class="modal-footer p-1">
+        <div class="row w-100">
+          <div class="col-md-6">
+            <button class="btn btn-outline-success btn-block" (click)="deleteService()">Confirm</button>
+          </div>
+          <div class="col-md-6">
+            <button class="btn btn-outline-danger btn-block" (click)="serviceDeleteModal.dismiss('Cross click')">Cancel</button>
+          </div>
+        </div>
       </div>
     </ng-template>
   </div>
