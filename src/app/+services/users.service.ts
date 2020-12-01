@@ -18,6 +18,7 @@ export class UsersService {
   }
 
   updateUser(user: User): Observable<void> {
+    console.log(user);
     return this.http.patch<void>(`${this.baseUrl}/Users/${user.userId}`, user, httpOptions);
   }
 

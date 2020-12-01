@@ -23,7 +23,13 @@
                      [style.display]="'none'">
             </div>
             <div class="card-body p-2">
-              <span class="badge badge-success" *ngFor="let roleUser of user.roles">{{roleUser.role.roleName}}</span>
+              <span class="badge badge-success mr-1" *ngFor="let roleUser of user.roles">{{roleUser.role?.roleName}}</span>
+            </div>
+            <div class="card-footer" *ngIf="!professional || !customer">
+              <button class="btn btn-outline-info btn-sm btn-block" *ngIf="!customer" (click)="addCustomerRole()">
+                <fa-icon [icon]="userIcon"></fa-icon> Devenez client</button>
+              <button class="btn btn-outline-info btn-sm btn-block" *ngIf="!professional">
+                <fa-icon [icon]="professionalIcon"></fa-icon> Devenez prestataire</button>
             </div>
           </div>
         </div>
@@ -68,7 +74,9 @@
               </div>
             </div>
           </div>
-          <h3 class="text-center">Vos expertises</h3>
+          <nav class="navbar navbar-light bg-light" *ngIf="professional">
+            <span class="display-4">Vos expertises</span>
+          </nav>
           <table class="table table-hover" *ngIf="professional">
             <thead class="thead-dark">
             <tr>
@@ -177,20 +185,34 @@
                     <th scope="col">{{'expertise' | translate}}</th>
                     <th scope="col">{{'service_date' | translate }}</th>
                     <th scope="col">Duration</th>
+                    <th scope="col">Professionnel</th>
+                    <th scope="col">Client</th>
                     <th scope="col">Total cost</th>
-                    <th scope="col">Actions</th>
                   </tr>
                   </thead>
                   <tbody>
-                  <tr *ngFor="let order of reservations; let i = index">
+                  <tr *ngFor="let order of upcomingReservations; let i = index">
                     <th scope="row">{{ i + 1 }}</th>
                     <td>{{ order.expertise.service.title }}</td>
                     <td>{{ order.startTime | date:'short' }}</td>
                     <td>{{ getDuration(order) }} hours</td>
+                    <td>{{ order.expertise.professional.user.lastName}}, {{ order.expertise.professional.user.firstName}}</td>
+                    <td>{{order.customer.user.firstName}}, {{order.customer.user.lastName}}</td>
                     <td>{{ order.totalCost | number: '1.2' }}
                       <fa-icon [icon]="euroIcon"></fa-icon>
                     </td>
-                    <td>Action</td>
+                  </tr>
+                  <tr><h4 class="text-center">Reservations effectuées</h4></tr>
+                  <tr *ngFor="let order of pastReservations; let i = index" class="bg-danger-light">
+                    <th scope="row">{{ i + 1 }}</th>
+                    <td>{{ order.expertise.service.title }}</td>
+                    <td>{{ order.startTime | date:'short' }}</td>
+                    <td>{{ getDuration(order) }} hours</td>
+                    <td>{{ order.expertise.professional.user.lastName}}, {{ order.expertise.professional.user.firstName}}</td>
+                    <td>{{order.customer.user.firstName}}, {{order.customer.user.lastName}}</td>
+                    <td>{{ order.totalCost | number: '1.2' }}
+                      <fa-icon [icon]="euroIcon"></fa-icon>
+                    </td>
                   </tr>
                   </tbody>
                 </table>
@@ -214,7 +236,11 @@
                     <td>
                       <span *ngFor="let role of user.roles" class="badge badge-light">{{role.role.roleName}}</span>
                     </td>
-                    <td>Action</td>
+                    <td>
+                      <button class="btn btn-outline-{{user.isActive ? 'danger' : 'success'}} btn-sm" (click)="showUserActivationDialog(userActivationTemplate, user)">
+                        {{user.isActive ? 'Deactivate' : 'Activate'}}
+                      </button>
+                    </td>
                   </tr>
                   </tbody>
                 </table>
@@ -307,6 +333,29 @@
           </div>
           <div class="col-md-6">
             <button class="btn btn-outline-danger btn-block" (click)="serviceDeleteModal.dismiss('Cross click')">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </ng-template>
+
+    <ng-template #userActivationTemplate let-userActivationModal class="bg-danger">
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">{{userSelectedForActivation.isActive ? 'Deactivate' : 'Activate' }} user</h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="userActivationModal.dismiss('Cross click')">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        {{userSelectedForActivation.isActive ? 'Deactivate' : 'Activate' }} service:
+        <h4>{{userSelectedForActivation.email}} ?</h4>
+      </div>
+      <div class="modal-footer p-1">
+        <div class="row w-100">
+          <div class="col-md-6">
+            <button class="btn btn-outline-success btn-block" (click)="onDeactivateUser()">Confirm</button>
+          </div>
+          <div class="col-md-6">
+            <button class="btn btn-outline-danger btn-block" (click)="userActivationModal.dismiss('Cross click')">Cancel</button>
           </div>
         </div>
       </div>

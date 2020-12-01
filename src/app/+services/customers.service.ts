@@ -23,6 +23,10 @@ export class CustomersService {
     return this.http.post<Customer>(`${this.baseUrl}/Customers`, customer, httpOptions);
   }
 
+  addCustomerRole(customer: Customer): Observable<Customer> {
+    return this.http.post<Customer>(`${this.baseUrl}/Customers/addAsRole`, customer, httpOptions);
+  }
+
   getCustomer(customerId: number): Observable<Customer> {
     return this.http.get<Customer>(`${this.baseUrl}/Customers/${customerId}`, httpOptions);
   }

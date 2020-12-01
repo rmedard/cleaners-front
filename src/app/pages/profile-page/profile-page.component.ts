@@ -1,6 +1,6 @@
 import {Component, OnInit, TemplateRef} from '@angular/core';
 import {AuthService} from '../../+services/auth.service';
-import {User} from '../../+models/user';
+import {User, UserType} from '../../+models/user';
 import {Customer} from '../../+models/customer';
 import {Professional} from '../../+models/professional';
 import {ProfessionalsService} from '../../+services/professionals.service';
@@ -8,7 +8,7 @@ import {CustomersService} from '../../+services/customers.service';
 import {Alert} from '../../+models/dto/alert';
 import * as moment from 'moment';
 import {Reservation} from '../../+models/reservation';
-import {faEuroSign, faPlusCircle} from '@fortawesome/free-solid-svg-icons';
+import {faEuroSign, faPlusCircle, faUser, faUserTie} from '@fortawesome/free-solid-svg-icons';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {ServicesService} from '../../+services/services.service';
 import {Category, Service} from '../../+models/service';
@@ -21,6 +21,7 @@ import {LoggedInUser} from '../../+models/dto/logged-in-user';
 import {Expertise} from '../../+models/expertise';
 import {ReservationService} from '../../+services/reservation.service';
 import {RoleUser} from '../../+models/role-user';
+import {Role} from '../../+models/role';
 
 @Component({
   selector: 'app-profile-page',
@@ -41,9 +42,13 @@ export class ProfilePageComponent implements OnInit {
   cloudinary = environment.cloudinaryConfig as CloudinaryConfiguration;
   expertiseToEdit: Expertise;
   reservations: Reservation[];
+  upcomingReservations: Reservation[];
+  pastReservations: Reservation[];
   users: User[];
+  userSelectedForActivation: User;
+  userIcon = faUser;
+  professionalIcon = faUserTie;
 
-  private hasBaseDropZoneOver = false;
   public uploader: FileUploader;
   private title = 'anyTitle';
   serviceForm: FormGroup;
@@ -81,6 +86,8 @@ export class ProfilePageComponent implements OnInit {
     if (this.user.roles.filter(r => r.role.roleName === 'Admin').length > 0) {
       this.reservationsService.getReservations().subscribe(data => {
         this.reservations = data;
+        this.upcomingReservations = data.filter(r => moment(r.startTime).isAfter(new Date()));
+        this.pastReservations = data.filter(r => moment(r.startTime).isBefore(new Date()));
       });
       this.usersService.getUsers().subscribe(data => {
         this.users = data;
@@ -180,7 +187,8 @@ export class ProfilePageComponent implements OnInit {
   }
 
   hasRole(roleName: string): boolean {
-    return this.user.roles.map(r => r.role.roleName).filter(x => x === roleName).length > 0;
+    return this.user.roles.filter(r => r.role != null)
+      .map(r => r.role.roleName).filter(x => x === roleName).length > 0;
   }
 
   onSaveService(): void {
@@ -196,7 +204,7 @@ export class ProfilePageComponent implements OnInit {
           msg: 'Service updated successfully.',
           dismissible: true
         } as Alert);
-        }, error => {
+      }, error => {
         this.alerts.push({
           type: 'danger',
           msg: 'Service updated failed.',
@@ -221,6 +229,26 @@ export class ProfilePageComponent implements OnInit {
     }
   }
 
+  onDeactivateUser(): void {
+    this.userSelectedForActivation.isActive = !this.userSelectedForActivation.isActive;
+    this.usersService.updateUser(this.userSelectedForActivation).subscribe(data => {
+      this.users.filter(u => u.userId === this.userSelectedForActivation.userId)[0].isActive = this.userSelectedForActivation.isActive;
+      this.alerts.push({
+        type: 'success',
+        msg: 'User updated successfully.',
+        dismissible: true
+      } as Alert);
+    }, error => {
+      console.log(error);
+      this.alerts.push({
+        type: 'danger',
+        msg: 'User update failed.',
+        dismissible: true
+      } as Alert);
+    });
+    this.modalService.dismissAll();
+  }
+
   editService(serviceTemplate: any, service: Service): void {
     this.selectedServiceForEdit = service;
     this.serviceForm.controls.titleField.setValue(service.title);
@@ -232,6 +260,11 @@ export class ProfilePageComponent implements OnInit {
   showDeleteServiceDialog(serviceTemplate: TemplateRef<any>, service: Service): void {
     this.selectedServiceForEdit = service;
     this.modalService.open(serviceTemplate, {size: 'sm'});
+  }
+
+  showUserActivationDialog(userActivationTemplate: TemplateRef<any>, selectedUser: User): void {
+    this.userSelectedForActivation = selectedUser;
+    this.modalService.open(userActivationTemplate, {size: 'sm'});
   }
 
   deleteService(): void {
@@ -261,5 +294,35 @@ export class ProfilePageComponent implements OnInit {
 
   saveService(): void {
 
+  }
+
+  addCustomerRole(): void {
+    const newCustomer = {
+      userId: this.user.userId,
+      isActive: true
+    } as Customer;
+    this.customersService.addCustomerRole(newCustomer).subscribe(data => {
+      const loggedInUser = this.authService.getLoggedInUser();
+      loggedInUser.userAccount.user.roles.push({
+        roleId: 1,
+        role: {roleName: UserType.CUSTOMER.valueOf(), id: 1} as Role
+      } as RoleUser);
+      this.customer = data as Customer;
+      loggedInUser.userAccount.customerId = this.customer.id;
+      this.user = loggedInUser.userAccount.user;
+      localStorage.setItem('user', JSON.stringify(loggedInUser as LoggedInUser));
+      this.alerts.push({
+        type: 'success',
+        msg: 'Customer role added successfully.',
+        dismissible: true
+      } as Alert);
+    }, error => {
+      console.log(error);
+      this.alerts.push({
+        type: 'danger',
+        msg: 'Adding customer role failed.',
+        dismissible: true
+      } as Alert);
+    });
   }
 }

@@ -11,6 +11,7 @@ export interface User {
   address: Address;
   picture: string;
   roles: RoleUser[];
+  isActive: boolean;
 }
 
 export enum UserType {
