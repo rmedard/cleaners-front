@@ -12,7 +12,7 @@ import {
 } from '../../../+models/dto/available-expertise-search-dto';
 import {ProfessionalsService} from '../../../+services/professionals.service';
 import {SimpleDateStringPipe} from '../../../+utils/simple-date-string.pipe';
-import {NgbDate, NgbDateStruct, NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import {NgbDate, NgbDateNativeAdapter, NgbDateStruct, NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import * as moment from 'moment';
 import {environment} from '../../../../environments/environment';
 import {Reservation} from '../../../+models/reservation';
@@ -142,7 +142,8 @@ export class SingleServiceComponent implements OnInit {
 
   order(content: any, selectedExpertise: Expertise): void {
     const serviceNgbDate = this.filterForm.controls.serviceDateField.value as NgbDate;
-    const serviceDate = new Date(serviceNgbDate.year, serviceNgbDate.month, serviceNgbDate.day);
+    const adapter = new NgbDateNativeAdapter();
+    const serviceDate = adapter.toModel(serviceNgbDate);
     const range = this.filterForm.controls.serviceHourRange.value as Array<number>;
     this.reservation = {
       startTime: moment(serviceDate).hours(range[0]).seconds(0).toDate(),

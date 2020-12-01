@@ -22,6 +22,7 @@ import {Expertise} from '../../+models/expertise';
 import {ReservationService} from '../../+services/reservation.service';
 import {RoleUser} from '../../+models/role-user';
 import {Role} from '../../+models/role';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-profile-page',
@@ -61,7 +62,7 @@ export class ProfilePageComponent implements OnInit {
               private customersService: CustomersService,
               private formBuilder: FormBuilder,
               private modalService: NgbModal,
-              private usersService: UsersService) {
+              private usersService: UsersService, private router: Router) {
   }
 
   ngOnInit(): void {
@@ -324,5 +325,9 @@ export class ProfilePageComponent implements OnInit {
         dismissible: true
       } as Alert);
     });
+  }
+
+  addProfessionalRole(): void {
+    this.router.navigate(['/become-member']);
   }
 }
