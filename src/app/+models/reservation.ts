@@ -10,10 +10,15 @@ export interface Reservation {
   startTime: Date;
   endTime: Date;
   totalCost: number;
-  status: string;
+  status: Status;
   recurrenceId?: number;
   recurrence: Recurrence;
   expertise: Expertise;
   billingId?: number;
   billing: Billing;
 }
+
+export enum Status {
+  CONFIRMED = 'Confirmed', REJECTED = 'Confirmed'
+}
+

@@ -4,6 +4,7 @@ import {environment} from '../../environments/environment';
 import {Reservation} from '../+models/reservation';
 import {Observable} from 'rxjs';
 import {ReservationForCreate} from '../+models/dto/reservation-for-create';
+import {ReservationSearchCriteriaDto} from '../+models/dto/reservation-search-criteria-dto';
 
 const httpOptions = {
   headers: new HttpHeaders({'Content-Type': 'application/json'})
@@ -27,4 +28,12 @@ export class ReservationService {
     return this.http.get<Reservation[]>(`${this.baseUrl}/Reservations`, httpOptions);
   }
 
+  cancelReservation(reservationId: number): Observable<string> {
+    return this.http.get<string>(`${this.baseUrl}/Reservations/${reservationId}/cancel`, httpOptions);
+  }
+
+  searchReservation(searchDto: ReservationSearchCriteriaDto): Observable<Reservation[]> {
+    console.log(searchDto);
+    return this.http.post<Reservation[]>(`${this.baseUrl}/Reservations/search`, searchDto, httpOptions);
+  }
 }

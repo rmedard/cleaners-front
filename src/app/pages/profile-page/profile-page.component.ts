@@ -7,7 +7,7 @@ import {ProfessionalsService} from '../../+services/professionals.service';
 import {CustomersService} from '../../+services/customers.service';
 import {Alert} from '../../+models/dto/alert';
 import * as moment from 'moment';
-import {Reservation} from '../../+models/reservation';
+import {Reservation, Status} from '../../+models/reservation';
 import {faEuroSign, faPlusCircle, faUser, faUserTie} from '@fortawesome/free-solid-svg-icons';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {ServicesService} from '../../+services/services.service';
@@ -23,6 +23,7 @@ import {ReservationService} from '../../+services/reservation.service';
 import {RoleUser} from '../../+models/role-user';
 import {Role} from '../../+models/role';
 import {Router} from '@angular/router';
+import {ReservationSearchCriteriaDto} from '../../+models/dto/reservation-search-criteria-dto';
 
 @Component({
   selector: 'app-profile-page',
@@ -42,9 +43,13 @@ export class ProfilePageComponent implements OnInit {
   closeResult = '';
   cloudinary = environment.cloudinaryConfig as CloudinaryConfiguration;
   expertiseToEdit: Expertise;
-  reservations: Reservation[];
   upcomingReservations: Reservation[];
   pastReservations: Reservation[];
+  upcomingProfessionalReservations: Reservation[] = [];
+  pastProfessionalReservations: Reservation[] = [];
+  upcomingCustomerReservations: Reservation[] = [];
+  pastCustomerReservations: Reservation[] = [];
+  reservationToUpdate: Reservation;
   users: User[];
   userSelectedForActivation: User;
   userIcon = faUser;
@@ -71,24 +76,43 @@ export class ProfilePageComponent implements OnInit {
     this.servicesService.getServices().subscribe(data => {
       this.services = data as Service[];
     });
+
     if (loggedInUser.userAccount.customerId > 0) {
       this.customersService.getCustomer(loggedInUser.userAccount.customerId).subscribe(data => {
         this.customer = data as Customer;
+        this.upcomingCustomerReservations = this.customer.reservations.filter(r => moment(r.startTime).isAfter(new Date()));
+        this.pastCustomerReservations = this.customer.reservations.filter(r => moment(r.startTime).isBefore(new Date()));
       });
     }
+
     if (loggedInUser.userAccount.professionalId > 0) {
       this.professionalsService.getProfessional(loggedInUser.userAccount.professionalId).subscribe(data => {
         this.professional = data as Professional;
         this.expertiseForm = this.formBuilder.group({
           rate: [0.00, [Validators.pattern('^[0-9]+(\\.[0-9]{1,2})?$')]]
         });
+
+        if (this.user.roles.filter(r => r.role.roleName === 'Admin').length === 0) {
+          this.reservationsService
+            .searchReservation({professionalId: this.professional.id} as ReservationSearchCriteriaDto)
+            .subscribe(res => {
+              this.upcomingProfessionalReservations = res.filter(r => moment(r.startTime).isAfter(new Date()));
+              this.pastProfessionalReservations = res.filter(r => moment(r.startTime).isBefore(new Date()));
+            });
+        }
       });
     }
+
     if (this.user.roles.filter(r => r.role.roleName === 'Admin').length > 0) {
       this.reservationsService.getReservations().subscribe(data => {
-        this.reservations = data;
         this.upcomingReservations = data.filter(r => moment(r.startTime).isAfter(new Date()));
         this.pastReservations = data.filter(r => moment(r.startTime).isBefore(new Date()));
+        if (loggedInUser.userAccount.professionalId > 0) {
+          this.upcomingProfessionalReservations = this.upcomingReservations
+            .filter(r => r.expertise.professionalId === loggedInUser.userAccount.professionalId);
+          this.pastProfessionalReservations = this.pastReservations
+            .filter(r => r.expertise.professionalId === loggedInUser.userAccount.professionalId);
+        }
       });
       this.usersService.getUsers().subscribe(data => {
         this.users = data;
@@ -329,5 +353,48 @@ export class ProfilePageComponent implements OnInit {
 
   addProfessionalRole(): void {
     this.router.navigate(['/become-member']);
+  }
+
+  confirmCancelReservation(modalTemplate: TemplateRef<any>, reservation: Reservation): void {
+    this.reservationToUpdate = reservation;
+    this.modalService.open(modalTemplate, {size: 'sm'});
+  }
+
+  cancelReservation(): void {
+    this.reservationsService.cancelReservation(this.reservationToUpdate.id).subscribe(data => {
+      const upcomingCustomerCancel = this.upcomingCustomerReservations.filter(r => r.id === this.reservationToUpdate.id);
+      if (upcomingCustomerCancel.length > 0) {
+        this.upcomingCustomerReservations.find(x => x.id === this.reservationToUpdate.id).status = Status.REJECTED;
+      }
+
+      const pastCustomerCancel = this.pastCustomerReservations.filter(r => r.id === this.reservationToUpdate.id);
+      if (pastCustomerCancel.length > 0) {
+        this.pastCustomerReservations.filter(r => r.id === this.reservationToUpdate.id)[0].status = Status.REJECTED;
+      }
+
+      const upcomingProfessionalCancel = this.upcomingProfessionalReservations.filter(r => r.id === this.reservationToUpdate.id);
+      if (upcomingProfessionalCancel.length > 0) {
+        this.upcomingProfessionalReservations.filter(r => r.id === this.reservationToUpdate.id)[0].status = Status.REJECTED;
+      }
+
+      const pastProfessionalCancel = this.pastProfessionalReservations.filter(r => r.id === this.reservationToUpdate.id);
+      if (pastProfessionalCancel.length > 0) {
+        this.pastProfessionalReservations.filter(r => r.id === this.reservationToUpdate.id)[0].status = Status.REJECTED;
+      }
+
+      this.alerts.push({
+        type: 'success',
+        msg: 'Reservation cancelled successfully.',
+        dismissible: true
+      } as Alert);
+    }, error => {
+      console.log(error);
+      this.alerts.push({
+        type: 'danger',
+        msg: 'Reservation cancellation failed.',
+        dismissible: true
+      } as Alert);
+    });
+    this.modalService.dismissAll();
   }
 }
