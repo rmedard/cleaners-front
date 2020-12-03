@@ -12,24 +12,33 @@
         <div class="col-md-3">
           <div class="card mb-3">
             <div class="p-4">
-              <img class="card-img-top rounded-circle shadow-lg" src="{{user.picture}}" alt="Card image cap" *ngIf="user.picture">
-              <img class="card-img-top rounded-circle shadow-lg" src="../../../assets/unknown.png" alt="Card image cap" *ngIf="!user.picture">
+              <img class="card-img-top rounded-circle shadow-lg" src="{{user.picture}}" alt="Card image cap"
+                   *ngIf="user.picture">
+              <img class="card-img-top rounded-circle shadow-lg" src="../../../assets/unknown.png" alt="Card image cap"
+                   *ngIf="!user.picture">
             </div>
             <div class="input-group">
-              <button (click)="fileInput.click()" class="btn btn-sm btn-outline-success btn-block m-2">Changer votre photo</button>
+              <button (click)="fileInput.click()" class="btn btn-sm btn-outline-success btn-block m-2">Changer votre
+                photo
+              </button>
               <input type="file" ng2FileSelect #fileInput
                      [uploader]="uploader"
                      accept="image/*"
                      [style.display]="'none'">
             </div>
             <div class="card-body p-2">
-              <span class="badge badge-success mr-1" *ngFor="let roleUser of user.roles">{{roleUser.role?.roleName}}</span>
+              <span class="badge badge-success mr-1"
+                    *ngFor="let roleUser of user.roles">{{roleUser.role?.roleName}}</span>
             </div>
             <div class="card-footer" *ngIf="!professional || !customer">
               <button class="btn btn-outline-info btn-sm btn-block" *ngIf="!customer" (click)="addCustomerRole()">
-                <fa-icon [icon]="userIcon"></fa-icon> Devenez client</button>
+                <fa-icon [icon]="userIcon"></fa-icon>
+                Devenez client
+              </button>
               <button class="btn btn-outline-info btn-sm btn-block" *ngIf="!professional">
-                <fa-icon [icon]="professionalIcon"></fa-icon> Devenez prestataire</button>
+                <fa-icon [icon]="professionalIcon"></fa-icon>
+                Devenez prestataire
+              </button>
             </div>
           </div>
         </div>
@@ -76,6 +85,10 @@
           </div>
           <nav class="navbar navbar-light bg-light" *ngIf="professional">
             <span class="display-4">Vos expertises</span>
+            <button class="btn btn-success btn-sm" (click)="showAddExpertiseModal(addExpertiseTemplate)">
+              <fa-icon [icon]="plusIcon"></fa-icon>
+              Ajouter expertise
+            </button>
           </nav>
           <table class="table table-hover" *ngIf="professional">
             <thead class="thead-dark">
@@ -96,7 +109,9 @@
               <td>
                 <div class="btn-toolbar" role="toolbar">
                   <div class="btn-group btn-group-sm mr-2" role="group" aria-label="Actions group">
-                    <button class="btn btn-outline-success" (click)="onEditExpertise(expertiseTemplate, expertise)">Edit</button>
+                    <button class="btn btn-outline-success" (click)="onEditExpertise(expertiseTemplate, expertise)">
+                      Edit
+                    </button>
                     <button class="btn btn-outline-danger">Cancel</button>
                   </div>
                 </div>
@@ -130,12 +145,14 @@
                 <fa-icon [icon]="euroIcon"></fa-icon>
               </td>
               <td>
-                <span class="badge badge-{{ reservation.status.valueOf() == 'Confirmed' ? 'success' : 'danger' }}">{{ reservation.status }}</span>
+                <span
+                  class="badge badge-{{ reservation.status.valueOf() == 'Confirmed' ? 'success' : 'danger' }}">{{ reservation.status }}</span>
               </td>
               <td>
                 <button class="btn btn-outline-danger btn-sm"
                         (click)="confirmCancelReservation(reservationUpdateTemplate, reservation)"
-                        [disabled]="reservation.status.valueOf() != 'Confirmed'">Cancel</button>
+                        [disabled]="reservation.status.valueOf() != 'Confirmed'">Cancel
+                </button>
               </td>
             </tr>
             </tbody>
@@ -157,12 +174,14 @@
                 <fa-icon [icon]="euroIcon"></fa-icon>
               </td>
               <td>
-                <span class="badge badge-{{ reservation.status.valueOf() == 'Confirmed' ? 'success' : 'danger' }}">{{ reservation.status }}</span>
+                <span
+                  class="badge badge-{{ reservation.status.valueOf() == 'Confirmed' ? 'success' : 'danger' }}">{{ reservation.status }}</span>
               </td>
               <td>
                 <button class="btn btn-outline-danger btn-sm"
                         (click)="confirmCancelReservation(reservationUpdateTemplate, reservation)"
-                        [disabled]="true">Cancel</button>
+                        [disabled]="true">Cancel
+                </button>
               </td>
             </tr>
             </tbody>
@@ -193,12 +212,14 @@
                 <fa-icon [icon]="euroIcon"></fa-icon>
               </td>
               <td>
-                <span class="badge badge-{{ reservation.status.valueOf() == 'Confirmed' ? 'success' : 'danger' }}">{{ reservation.status }}</span>
+                <span
+                  class="badge badge-{{ reservation.status.valueOf() == 'Confirmed' ? 'success' : 'danger' }}">{{ reservation.status }}</span>
               </td>
               <td>
                 <button class="btn btn-outline-danger btn-sm"
                         (click)="confirmCancelReservation(reservationUpdateTemplate, reservation)"
-                        [disabled]="reservation.status.valueOf() != 'Confirmed'">Cancel</button>
+                        [disabled]="reservation.status.valueOf() != 'Confirmed'">Cancel
+                </button>
               </td>
             </tr>
             </tbody>
@@ -220,12 +241,14 @@
                 <fa-icon [icon]="euroIcon"></fa-icon>
               </td>
               <td>
-                <span class="badge badge-{{ reservation.status.valueOf() == 'Confirmed' ? 'success' : 'danger' }}">{{ reservation.status }}</span>
+                <span
+                  class="badge badge-{{ reservation.status.valueOf() == 'Confirmed' ? 'success' : 'danger' }}">{{ reservation.status }}</span>
               </td>
               <td>
                 <button class="btn btn-outline-danger btn-sm"
                         (click)="confirmCancelReservation(reservationUpdateTemplate, reservation)"
-                        [disabled]="true">Cancel</button>
+                        [disabled]="true">Cancel
+                </button>
               </td>
             </tr>
             </tbody>
@@ -236,21 +259,28 @@
 
             <ul class="nav nav-tabs mb-3" id="myTab" role="tablist">
               <li class="nav-item">
-                <a class="nav-link active" id="services-tab" data-toggle="tab" href="#services" role="tab" aria-controls="services" aria-selected="true">Services</a>
+                <a class="nav-link active" id="services-tab" data-toggle="tab" href="#services" role="tab"
+                   aria-controls="services" aria-selected="true">Services</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" id="bills-tab" data-toggle="tab" href="#bills" role="tab" aria-controls="bills" aria-selected="false">Factures</a>
+                <a class="nav-link" id="bills-tab" data-toggle="tab" href="#bills" role="tab" aria-controls="bills"
+                   aria-selected="false">Factures</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" id="reservations-tab" data-toggle="tab" href="#reservations" role="tab" aria-controls="reservations" aria-selected="false">Reservations</a>
+                <a class="nav-link" id="reservations-tab" data-toggle="tab" href="#reservations" role="tab"
+                   aria-controls="reservations" aria-selected="false">Reservations</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" id="users-tab" data-toggle="tab" href="#users" role="tab" aria-controls="users" aria-selected="false">Utilisateurs</a>
+                <a class="nav-link" id="users-tab" data-toggle="tab" href="#users" role="tab" aria-controls="users"
+                   aria-selected="false">Utilisateurs</a>
               </li>
             </ul>
             <div class="tab-content" id="myTabContent">
               <div class="tab-pane fade show active" id="services" role="tabpanel" aria-labelledby="services-tab">
-                <button class="btn btn-sm btn-success mb-1" (click)="createService(serviceTemplate)"><fa-icon [icon]="addIcon"></fa-icon> Add service</button>
+                <button class="btn btn-sm btn-success mb-1" (click)="createService(serviceTemplate)">
+                  <fa-icon [icon]="addIcon"></fa-icon>
+                  Add service
+                </button>
                 <table class="table table-hover">
                   <thead class="thead-dark">
                   <tr>
@@ -262,14 +292,18 @@
                   </tr>
                   </thead>
                   <tbody>
-                  <tr *ngFor="let service of services; let i = index" class="{{service.isActive ? 'bg-success-light' : 'bg-danger-light'}}">
+                  <tr *ngFor="let service of services; let i = index"
+                      class="{{service.isActive ? 'bg-success-light' : 'bg-danger-light'}}">
                     <th scope="row">{{ i + 1 }}</th>
                     <td>{{ service.title }}</td>
                     <td>{{ service.description }}</td>
                     <td>{{ service.category }}</td>
                     <td>
-                      <button class="btn btn-outline-success btn-sm mr-2 btn-block" (click)="editService(serviceTemplate, service)">Edit</button>
-                      <button class="btn btn-outline-danger btn-sm mr-2 btn-block" (click)="showDeleteServiceDialog(serviceDeleteTemplate, service)">{{service.isActive ? 'Deactivate' : 'Activate'}}</button>
+                      <button class="btn btn-outline-success btn-sm mr-2 btn-block"
+                              (click)="editService(serviceTemplate, service)">Edit
+                      </button>
+                      <button class="btn btn-outline-danger btn-sm mr-2 btn-block"
+                              (click)="showDeleteServiceDialog(serviceDeleteTemplate, service)">{{service.isActive ? 'Deactivate' : 'Activate'}}</button>
                     </td>
                   </tr>
                   </tbody>
@@ -295,7 +329,8 @@
                     <td>{{ order.expertise.service.title }}</td>
                     <td>{{ order.startTime | date:'short' }}</td>
                     <td>{{ getDuration(order) }} hours</td>
-                    <td>{{ order.expertise.professional.user.lastName}}, {{ order.expertise.professional.user.firstName}}</td>
+                    <td>{{ order.expertise.professional.user.lastName}}
+                      , {{ order.expertise.professional.user.firstName}}</td>
                     <td>{{order.customer.user.firstName}}, {{order.customer.user.lastName}}</td>
                     <td>{{ order.totalCost | number: '1.2' }}
                       <fa-icon [icon]="euroIcon"></fa-icon>
@@ -307,7 +342,8 @@
                     <td>{{ order.expertise.service.title }}</td>
                     <td>{{ order.startTime | date:'short' }}</td>
                     <td>{{ getDuration(order) }} hours</td>
-                    <td>{{ order.expertise.professional.user.lastName}}, {{ order.expertise.professional.user.firstName}}</td>
+                    <td>{{ order.expertise.professional.user.lastName}}
+                      , {{ order.expertise.professional.user.firstName}}</td>
                     <td>{{order.customer.user.firstName}}, {{order.customer.user.lastName}}</td>
                     <td>{{ order.totalCost | number: '1.2' }}
                       <fa-icon [icon]="euroIcon"></fa-icon>
@@ -336,7 +372,8 @@
                       <span *ngFor="let role of user.roles" class="badge badge-light">{{role.role.roleName}}</span>
                     </td>
                     <td>
-                      <button class="btn btn-outline-{{user.isActive ? 'danger' : 'success'}} btn-sm" (click)="showUserActivationDialog(userActivationTemplate, user)">
+                      <button class="btn btn-outline-{{user.isActive ? 'danger' : 'success'}} btn-sm"
+                              (click)="showUserActivationDialog(userActivationTemplate, user)">
                         {{user.isActive ? 'Deactivate' : 'Activate'}}
                       </button>
                     </td>
@@ -353,8 +390,9 @@
 
     <ng-template #expertiseTemplate let-expertiseModal>
       <div class="modal-header">
-        <h4 class="modal-title pull-left">Expertise</h4>
-        <button type="button" class="close pull-right" aria-label="Close" (click)="expertiseModal.dismiss('Cross click')">
+        <h4 class="modal-title pull-left">Modifier Expertise</h4>
+        <button type="button" class="close pull-right" aria-label="Close"
+                (click)="expertiseModal.dismiss('Cross click')">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
@@ -378,6 +416,43 @@
       </div>
     </ng-template>
 
+    <ng-template #addExpertiseTemplate let-addExpertiseModal>
+      <form [formGroup]="addExpertiseForm" (ngSubmit)="onAddExpertise()">
+        <div class="modal-header">
+          <h4 class="modal-title pull-left">Modifier Expertise</h4>
+          <button type="button" class="close pull-right" aria-label="Close"
+                  (click)="addExpertiseModal.dismiss('Cross click')">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group row">
+            <label for="addExpertiseService" class="col-form-label col-sm-3">Service</label>
+            <div class="col-sm-9">
+              <select class="form-control" id="addExpertiseService" formControlName="addExpertiseService">
+                <option *ngFor="let service of addableServices" [ngValue]="service">{{service.title}}</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="addExpertiseRate" class="col-form-label col-sm-3">Rate</label>
+            <div class="input-group col-sm-9">
+              <input type="text" class="form-control" id="addExpertiseRate" formControlName="addExpertiseRate">
+              <div class="input-group-append">
+                <span class="input-group-text">€</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer p-1">
+          <button type="submit" class="btn btn-primary" [disabled]="!addExpertiseForm.valid">Ajouter</button>
+          <button type="button" class="btn btn-danger" (click)="addExpertiseModal.dismiss('Cross click')">
+            Annuler
+          </button>
+        </div>
+      </form>
+    </ng-template>
+
     <ng-template #serviceTemplate let-serviceModal>
       <div class="modal-header">
         <h4 class="modal-title pull-left">Service</h4>
@@ -393,21 +468,25 @@
           </div>
           <div class="form-group">
             <label for="descriptionField">Description</label>
-            <textarea type="text" class="form-control" id="descriptionField" formControlName="descriptionField" rows="3"></textarea>
+            <textarea type="text" class="form-control" id="descriptionField" formControlName="descriptionField"
+                      rows="3"></textarea>
           </div>
           <div class="form-group">
             <div class="form-check">
-              <input type="radio" value="Interieur" formControlName="categoryField" class="form-check-input" id="interieur-input">
+              <input type="radio" value="Interieur" formControlName="categoryField" class="form-check-input"
+                     id="interieur-input">
               <label for="interieur-input">Interieur</label>
             </div>
             <div class="form-check">
-              <input type="radio" value="Exterieur" formControlName="categoryField" class="form-check-input" id="exterieur-input">
+              <input type="radio" value="Exterieur" formControlName="categoryField" class="form-check-input"
+                     id="exterieur-input">
               <label for="exterieur-input">Exterieur</label>
             </div>
           </div>
           <div class="form-row">
             <div class="col">
-              <button type="submit" class="btn btn-primary" [disabled]="!serviceForm.valid">{{'register' | translate}}</button>
+              <button type="submit" class="btn btn-primary"
+                      [disabled]="!serviceForm.valid">{{'register' | translate}}</button>
             </div>
           </div>
         </form>
@@ -417,7 +496,8 @@
     <ng-template #serviceDeleteTemplate let-serviceDeleteModal class="bg-danger">
       <div class="modal-header">
         <h4 class="modal-title pull-left">{{selectedServiceForEdit.isActive ? 'Deactivate' : 'Activate' }} Service</h4>
-        <button type="button" class="close pull-right" aria-label="Close" (click)="serviceDeleteModal.dismiss('Cross click')">
+        <button type="button" class="close pull-right" aria-label="Close"
+                (click)="serviceDeleteModal.dismiss('Cross click')">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
@@ -431,7 +511,9 @@
             <button class="btn btn-outline-success btn-block" (click)="deleteService()">Confirm</button>
           </div>
           <div class="col-md-6">
-            <button class="btn btn-outline-danger btn-block" (click)="serviceDeleteModal.dismiss('Cross click')">Cancel</button>
+            <button class="btn btn-outline-danger btn-block" (click)="serviceDeleteModal.dismiss('Cross click')">
+              Cancel
+            </button>
           </div>
         </div>
       </div>
@@ -440,7 +522,8 @@
     <ng-template #reservationUpdateTemplate let-reservationUpdateModal class="bg-danger">
       <div class="modal-header">
         <h4 class="modal-title pull-left">Cancel Reservation</h4>
-        <button type="button" class="close pull-right" aria-label="Close" (click)="reservationUpdateModal.dismiss('Cross click')">
+        <button type="button" class="close pull-right" aria-label="Close"
+                (click)="reservationUpdateModal.dismiss('Cross click')">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
@@ -454,7 +537,9 @@
             <button class="btn btn-outline-success btn-block" (click)="cancelReservation()">Confirm</button>
           </div>
           <div class="col-md-6">
-            <button class="btn btn-outline-danger btn-block" (click)="reservationUpdateModal.dismiss('Cross click')">Cancel</button>
+            <button class="btn btn-outline-danger btn-block" (click)="reservationUpdateModal.dismiss('Cross click')">
+              Cancel
+            </button>
           </div>
         </div>
       </div>
@@ -463,7 +548,8 @@
     <ng-template #userActivationTemplate let-userActivationModal class="bg-danger">
       <div class="modal-header">
         <h4 class="modal-title pull-left">{{userSelectedForActivation.isActive ? 'Deactivate' : 'Activate' }} user</h4>
-        <button type="button" class="close pull-right" aria-label="Close" (click)="userActivationModal.dismiss('Cross click')">
+        <button type="button" class="close pull-right" aria-label="Close"
+                (click)="userActivationModal.dismiss('Cross click')">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
@@ -477,7 +563,9 @@
             <button class="btn btn-outline-success btn-block" (click)="onDeactivateUser()">Confirm</button>
           </div>
           <div class="col-md-6">
-            <button class="btn btn-outline-danger btn-block" (click)="userActivationModal.dismiss('Cross click')">Cancel</button>
+            <button class="btn btn-outline-danger btn-block" (click)="userActivationModal.dismiss('Cross click')">
+              Cancel
+            </button>
           </div>
         </div>
       </div>

@@ -8,7 +8,7 @@ import {CustomersService} from '../../+services/customers.service';
 import {Alert} from '../../+models/dto/alert';
 import * as moment from 'moment';
 import {Reservation, Status} from '../../+models/reservation';
-import {faEuroSign, faPlusCircle, faUser, faUserTie} from '@fortawesome/free-solid-svg-icons';
+import {faEuroSign, faPlus, faPlusCircle, faUser, faUserTie} from '@fortawesome/free-solid-svg-icons';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {ServicesService} from '../../+services/services.service';
 import {Category, Service} from '../../+models/service';
@@ -24,6 +24,8 @@ import {RoleUser} from '../../+models/role-user';
 import {Role} from '../../+models/role';
 import {Router} from '@angular/router';
 import {ReservationSearchCriteriaDto} from '../../+models/dto/reservation-search-criteria-dto';
+import * as _ from 'underscore';
+import {AddExpertiseToProfessional} from '../../+models/dto/add-expertise-to-professional';
 
 @Component({
   selector: 'app-profile-page',
@@ -37,7 +39,9 @@ export class ProfilePageComponent implements OnInit {
   professional: Professional;
   alerts: Alert[] = [];
   euroIcon = faEuroSign;
+  plusIcon = faPlus;
   expertiseForm: FormGroup;
+  addExpertiseForm: FormGroup;
   services: Service[];
   selectedServiceForEdit: Service = {} as Service;
   closeResult = '';
@@ -59,6 +63,7 @@ export class ProfilePageComponent implements OnInit {
   private title = 'anyTitle';
   serviceForm: FormGroup;
   addIcon = faPlusCircle;
+  addableServices: Service[];
 
   constructor(private authService: AuthService,
               private professionalsService: ProfessionalsService,
@@ -180,9 +185,34 @@ export class ProfilePageComponent implements OnInit {
         dismissible: true
       } as Alert);
     }, error => {
+      console.log(error);
       this.alerts.push({
         type: 'danger',
         msg: 'Expertise updated failed.',
+        dismissible: true
+      } as Alert);
+    });
+    this.modalService.dismissAll();
+  }
+
+  onAddExpertise(): void {
+    const grantExpertise = {
+      professionalId: this.professional.id,
+      serviceId: (this.addExpertiseForm.controls.addExpertiseService.value as Service).id,
+      hourlyRate: this.addExpertiseForm.controls.addExpertiseRate.value
+    } as AddExpertiseToProfessional;
+    this.professionalsService.grantExpertise(grantExpertise, this.professional.id).subscribe(data => {
+      this.professional = data;
+      this.alerts.push({
+        type: 'success',
+        msg: 'Expertise added successfully.',
+        dismissible: true
+      } as Alert);
+    }, error => {
+      console.log(error);
+      this.alerts.push({
+        type: 'danger',
+        msg: 'Adding expertise failed.',
         dismissible: true
       } as Alert);
     });
@@ -396,5 +426,15 @@ export class ProfilePageComponent implements OnInit {
       } as Alert);
     });
     this.modalService.dismissAll();
+  }
+
+  showAddExpertiseModal(addExpertiseTemplate: TemplateRef<any>): void {
+    this.addableServices = this.services
+      .filter(s => !_.contains(this.professional.expertises.map(e => e.service.id), s.id));
+    this.addExpertiseForm = this.formBuilder.group({
+      addExpertiseService: new FormControl(this.addableServices[0]),
+      addExpertiseRate: new FormControl(0.0, [Validators.pattern('^[0-9]+(\\.[0-9]{1,2})?$'), Validators.min(0.0), Validators.required])
+    });
+    this.modalService.open(addExpertiseTemplate, {size: 'lg'});
   }
 }

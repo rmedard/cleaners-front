@@ -6,6 +6,7 @@ import {Expertise} from '../+models/expertise';
 import {AvailableExpertiseSearchDto} from '../+models/dto/available-expertise-search-dto';
 import {Professional} from '../+models/professional';
 import {ProfessionalForCreate} from '../+models/dto/professional-for-create';
+import {AddExpertiseToProfessional} from '../+models/dto/add-expertise-to-professional';
 
 const httpOptions = {
   headers: new HttpHeaders({'Content-Type': 'application/json'})
@@ -35,5 +36,9 @@ export class ProfessionalsService {
 
   updateExpertise(expertise: Expertise): Observable<void> {
     return this.http.put<void>(`${this.baseUrl}/Expertises/${expertise.id}`, expertise, httpOptions);
+  }
+
+  grantExpertise(grantExpertise: AddExpertiseToProfessional, professionalId: number): Observable<Professional> {
+    return this.http.post<Professional>(`${this.baseUrl}/Professionals/${professionalId}/expertises`, grantExpertise, httpOptions);
   }
 }
