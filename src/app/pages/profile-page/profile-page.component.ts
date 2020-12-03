@@ -8,8 +8,8 @@ import {CustomersService} from '../../+services/customers.service';
 import {Alert} from '../../+models/dto/alert';
 import * as moment from 'moment';
 import {Reservation, Status} from '../../+models/reservation';
-import {faEuroSign, faPlus, faPlusCircle, faUser, faUserTie} from '@fortawesome/free-solid-svg-icons';
-import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
+import {faEuroSign, faMinus, faPlus, faPlusCircle, faUser, faUserTie} from '@fortawesome/free-solid-svg-icons';
+import {FormArray, FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {ServicesService} from '../../+services/services.service';
 import {Category, Service} from '../../+models/service';
 import {ModalDismissReasons, NgbModal} from '@ng-bootstrap/ng-bootstrap';
@@ -26,6 +26,7 @@ import {Router} from '@angular/router';
 import {ReservationSearchCriteriaDto} from '../../+models/dto/reservation-search-criteria-dto';
 import * as _ from 'underscore';
 import {AddExpertiseToProfessional} from '../../+models/dto/add-expertise-to-professional';
+import {Label} from '../../+models/recurrence';
 
 @Component({
   selector: 'app-profile-page',
@@ -40,6 +41,7 @@ export class ProfilePageComponent implements OnInit {
   alerts: Alert[] = [];
   euroIcon = faEuroSign;
   plusIcon = faPlus;
+  removeIcon = faMinus;
   expertiseForm: FormGroup;
   addExpertiseForm: FormGroup;
   services: Service[];
@@ -58,12 +60,15 @@ export class ProfilePageComponent implements OnInit {
   userSelectedForActivation: User;
   userIcon = faUser;
   professionalIcon = faUserTie;
+  addedProposedExpertises: FormArray = {} as FormArray;
+  servicesProposed: Service[];
 
   public uploader: FileUploader;
   private title = 'anyTitle';
   serviceForm: FormGroup;
   addIcon = faPlusCircle;
   addableServices: Service[];
+  addProfessionalRoleForm: FormGroup;
 
   constructor(private authService: AuthService,
               private professionalsService: ProfessionalsService,
@@ -436,5 +441,51 @@ export class ProfilePageComponent implements OnInit {
       addExpertiseRate: new FormControl(0.0, [Validators.pattern('^[0-9]+(\\.[0-9]{1,2})?$'), Validators.min(0.0), Validators.required])
     });
     this.modalService.open(addExpertiseTemplate, {size: 'lg'});
+  }
+
+  getRecurrenceName(label: Label): string {
+    switch (label) {
+      case Label.DAILY:
+        return 'Daily';
+      case Label.WEEKLY:
+        return 'Weekly';
+      default:
+        return 'Once';
+    }
+  }
+
+  showAddProfessionalRoleModal(addProfessionalRoleTemplate: TemplateRef<any>): void {
+    this.servicesProposed = [];
+    this.servicesProposed.push(this.services[0]);
+    this.services = this.services.filter(s => !_.contains(this.servicesProposed, s));
+    this.addedProposedExpertises = new FormArray([
+      new FormGroup({
+        proposedService: new FormControl(this.servicesProposed[0]),
+        proposedHourlyRate: new FormControl(0.00, [Validators.required, Validators.min(1)])
+      })
+    ], [Validators.required]);
+    this.addProfessionalRoleForm = this.formBuilder.group({
+      proposedExpertises: this.addedProposedExpertises
+    });
+    // this.modalService.open(addProfessionalRoleTemplate, {size: 'lg'});
+  }
+
+  removeProposedService(i: number): void {
+    const grpToRemove = this.addedProposedExpertises.controls[i] as FormGroup;
+    this.servicesProposed.push(grpToRemove.controls.proposedService.value as Service);
+    this.addedProposedExpertises.removeAt(i);
+  }
+
+  addProposedService(): void {
+    const addedServiceCtr = _.last(this.addedProposedExpertises.controls) as FormGroup;
+    const addedService = addedServiceCtr.controls.proposedService.value as Service;
+    this.servicesProposed.push(addedService);
+    console.log(this.servicesProposed);
+    this.services = this.services.filter(s => !_.contains(this.servicesProposed, s));
+    this.addedProposedExpertises.insert(this.addedProposedExpertises.length, new FormGroup({
+      proposedService: new FormControl(this.servicesProposed[0]),
+      proposedHourlyRate: new FormControl(0.00, [Validators.required, Validators.min(1)])
+    }));
+    this.services = this.services.filter(s => !_.contains(this.servicesProposed, s));
   }
 }
