@@ -70,6 +70,7 @@ export class ProfilePageComponent implements OnInit {
   addIcon = faPlusCircle;
   addableServices: Service[];
   addProfessionalRoleForm: FormGroup;
+  selectedExpertiseForCancel: Expertise;
 
   private static getDismissReason(reason: any): string {
     if (reason === ModalDismissReasons.ESC) {
@@ -527,5 +528,29 @@ export class ProfilePageComponent implements OnInit {
 
   isSelected(service: Service): boolean {
     return _.contains(this.servicesProposed, service);
+  }
+
+  cancelExpertise(): void {
+    this.selectedExpertiseForCancel.isActive = false;
+    this.servicesService.cancelExpertise(this.selectedExpertiseForCancel).subscribe(data => {
+      this.alerts.push({
+        type: 'success',
+        msg: 'Expertise cancelled successfully.',
+        dismissible: true
+      } as Alert);
+    }, error => {
+      console.log(error);
+      this.alerts.push({
+        type: 'danger',
+        msg: 'Cancellation failed.',
+        dismissible: true
+      } as Alert);
+    });
+    this.modalService.dismissAll();
+  }
+
+  showCancelExpertiseModal(cancelExpertiseTemplate: TemplateRef<any>, expertise: Expertise): void {
+    this.selectedExpertiseForCancel = expertise;
+    this.modalService.open(cancelExpertiseTemplate, {size: 'sm'});
   }
 }

@@ -102,7 +102,7 @@
             </tr>
             </thead>
             <tbody>
-            <tr *ngFor="let expertise of professional.expertises; let i = index">
+            <tr *ngFor="let expertise of professional.expertises; let i = index" class="bg-{{expertise.isActive ? 'white' : 'danger-light'}}">
               <th scope="row">{{ i + 1 }}</th>
               <td>{{ expertise.service.title }}</td>
               <td>{{ expertise.service.category }}</td>
@@ -110,10 +110,10 @@
               <td>
                 <div class="btn-toolbar" role="toolbar">
                   <div class="btn-group btn-group-sm mr-2" role="group" aria-label="Actions group">
-                    <button class="btn btn-outline-success" (click)="onEditExpertise(expertiseTemplate, expertise)">
+                    <button class="btn btn-outline-success" (click)="onEditExpertise(expertiseTemplate, expertise)" [disabled]="!expertise.isActive">
                       Edit
                     </button>
-                    <button class="btn btn-outline-danger">Cancel</button>
+                    <button class="btn btn-outline-danger" (click)="showCancelExpertiseModal(cancelExpertiseTemplate, expertise)" [disabled]="!expertise.isActive">Cancel</button>
                   </div>
                 </div>
               </td>
@@ -129,6 +129,7 @@
             <tr>
               <th scope="col">#</th>
               <th scope="col">{{'expertise' | translate}}</th>
+              <th scope="col">Client</th>
               <th scope="col">{{'service_date' | translate }}</th>
               <th scope="col">Duration</th>
               <th scope="col">Total cost</th>
@@ -140,6 +141,7 @@
             <tr *ngFor="let reservation of upcomingProfessionalReservations; let i = index">
               <th scope="row">{{ i + 1 }}</th>
               <td>{{ reservation.expertise.service.title }}</td>
+              <td>{{ reservation.customer.user.lastName }}, {{ reservation.customer.user.firstName }}</td>
               <td>{{ reservation.startTime | date:'short' }}</td>
               <td>{{ getDuration(reservation) }} hours</td>
               <td>{{ reservation.totalCost | number: '1.2' }}
@@ -196,6 +198,7 @@
             <tr>
               <th scope="col">#</th>
               <th scope="col">{{'expertise' | translate}}</th>
+              <th scope="col">Prestataire</th>
               <th scope="col">{{'service_date' | translate }}</th>
               <th scope="col">Duration</th>
               <th scope="col">Total cost</th>
@@ -208,6 +211,7 @@
             <tr *ngFor="let reservation of upcomingCustomerReservations; let i = index">
               <th scope="row">{{ i + 1 }}</th>
               <td>{{ reservation.expertise.service.title }}</td>
+              <td>{{ reservation.expertise.professional.user.lastName }}, {{ reservation.expertise.professional.user.firstName }}</td>
               <td>{{ reservation.startTime | date:'short' }}</td>
               <td>{{ getDuration(reservation) }} hours</td>
               <td>{{ reservation.totalCost | number: '1.2' }}
@@ -233,7 +237,7 @@
           <table class="table table-hover" *ngIf="customer">
             <thead class="thead-light">
             <tr>
-              <th colspan="8" class="text-center">Reservations effectuées</th>
+              <th colspan="8" class="text-center">Commandes effectuées</th>
             </tr>
             </thead>
             <tbody>
@@ -586,6 +590,32 @@
           </div>
           <div class="col-md-6">
             <button class="btn btn-outline-danger btn-block" (click)="serviceDeleteModal.dismiss('Cross click')">
+              Cancel
+            </button>
+          </div>
+        </div>
+      </div>
+    </ng-template>
+
+    <ng-template #cancelExpertiseTemplate let-cancelExpertiseModal class="bg-danger">
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">Annuler Expertise</h4>
+        <button type="button" class="close pull-right" aria-label="Close"
+                (click)="cancelExpertiseModal.dismiss('Cross click')">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        Annuler expertise:
+        <h4>{{selectedExpertiseForCancel.service.title}} ?</h4>
+      </div>
+      <div class="modal-footer p-1">
+        <div class="row w-100">
+          <div class="col-md-6">
+            <button class="btn btn-outline-success btn-block" (click)="cancelExpertise()">Confirm</button>
+          </div>
+          <div class="col-md-6">
+            <button class="btn btn-outline-danger btn-block" (click)="cancelExpertiseModal.dismiss('Cross click')">
               Cancel
             </button>
           </div>

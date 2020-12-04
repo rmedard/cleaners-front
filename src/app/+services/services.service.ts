@@ -38,4 +38,8 @@ export class ServicesService {
   updateService(service: Service): Observable<void> {
     return this.http.put<void>(`${this.baseUrl}/Services/${service.id}`, service, httpOptions);
   }
+
+  cancelExpertise(expertise: Expertise): Observable<void> {
+    return this.http.put<void>(`${this.baseUrl}/Expertises/${expertise.id}`, expertise, httpOptions);
+  }
 }

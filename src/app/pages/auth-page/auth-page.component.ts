@@ -35,8 +35,7 @@ export class AuthPageComponent implements OnInit {
         this.router.navigate(['/profile'])
           .then(() => {
             window.location.reload();
-          })
-        ;
+          });
       }, error => {
         this.alerts.push({
           type: 'danger',

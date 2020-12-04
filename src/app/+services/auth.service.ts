@@ -61,7 +61,7 @@ export class AuthService {
     if (!this.loggedIn()) {
       return false;
     } else {
-      return _.contains(this.getLoggedInUser().userAccount.user.roles?.map(r => r.role.roleName), roleName);
+      return _.contains(this.getLoggedInUser().userAccount.user.roles.map(r => r.role.roleName), roleName);
     }
   }
 }
