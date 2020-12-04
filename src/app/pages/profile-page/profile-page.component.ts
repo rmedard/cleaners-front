@@ -26,7 +26,7 @@ import {Router} from '@angular/router';
 import {ReservationSearchCriteriaDto} from '../../+models/dto/reservation-search-criteria-dto';
 import * as _ from 'underscore';
 import {AddExpertiseToProfessional} from '../../+models/dto/add-expertise-to-professional';
-import {Label} from '../../+models/recurrence';
+import {Label, Recurrence} from '../../+models/recurrence';
 
 @Component({
   selector: 'app-profile-page',
@@ -443,14 +443,18 @@ export class ProfilePageComponent implements OnInit {
     this.modalService.open(addExpertiseTemplate, {size: 'lg'});
   }
 
-  getRecurrenceName(label: Label): string {
-    switch (label) {
-      case Label.DAILY:
-        return 'Daily';
-      case Label.WEEKLY:
-        return 'Weekly';
-      default:
-        return 'Once';
+  getRecurrenceName(label: Recurrence): string {
+    if (label != null) {
+      switch (label.label) {
+        case Label.DAILY:
+          return 'Daily';
+        case Label.WEEKLY:
+          return 'Weekly';
+        default:
+          return 'Once';
+      }
+    } else {
+      return 'Once';
     }
   }
 
