@@ -36,4 +36,8 @@ export class ReservationService {
     console.log(searchDto);
     return this.http.post<Reservation[]>(`${this.baseUrl}/Reservations/search`, searchDto, httpOptions);
   }
+
+  generateUpcomingReservations(): Observable<void> {
+    return this.http.get<void>(`${this.baseUrl}/Reservations/generate-reservations`, httpOptions);
+  }
 }

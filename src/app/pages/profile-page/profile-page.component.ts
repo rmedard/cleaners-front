@@ -27,6 +27,7 @@ import {ReservationSearchCriteriaDto} from '../../+models/dto/reservation-search
 import * as _ from 'underscore';
 import {AddExpertiseToProfessional} from '../../+models/dto/add-expertise-to-professional';
 import {Label, Recurrence} from '../../+models/recurrence';
+import {dateComparator} from '@ng-bootstrap/ng-bootstrap/datepicker/datepicker-tools';
 
 @Component({
   selector: 'app-profile-page',
@@ -552,5 +553,22 @@ export class ProfilePageComponent implements OnInit {
   showCancelExpertiseModal(cancelExpertiseTemplate: TemplateRef<any>, expertise: Expertise): void {
     this.selectedExpertiseForCancel = expertise;
     this.modalService.open(cancelExpertiseTemplate, {size: 'sm'});
+  }
+
+  generateUpcomingReservations(): void {
+    this.reservationsService.generateUpcomingReservations().subscribe(data => {
+      this.alerts.push({
+        type: 'success',
+        msg: 'Reservations generated successfully.',
+        dismissible: true
+      } as Alert);
+    }, error => {
+      console.log(error);
+      this.alerts.push({
+        type: 'danger',
+        msg: 'Reservations generation failed.',
+        dismissible: true
+      } as Alert);
+    });
   }
 }

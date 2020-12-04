@@ -30,16 +30,23 @@
               <span class="badge badge-success mr-1"
                     *ngFor="let roleUser of user.roles">{{roleUser.role?.roleName}}</span>
             </div>
-            <div class="card-footer" *ngIf="!hasRole('Admin') && (!professional || !customer)">
-              <button class="btn btn-outline-info btn-sm btn-block" *ngIf="!customer" (click)="addCustomerRole()">
-                <fa-icon [icon]="userIcon"></fa-icon>
-                Devenez client
-              </button>
-              <button class="btn btn-outline-info btn-sm btn-block" *ngIf="!professional"
-                      (click)="showAddProfessionalRoleModal(addProfessionalRoleTemplate)">
-                <fa-icon [icon]="professionalIcon"></fa-icon>
-                Devenez prestataire
-              </button>
+            <div class="card-footer">
+              <div class="row" *ngIf="!hasRole('Admin') && (!professional || !customer)">
+                <button class="btn btn-outline-info btn-sm btn-block" *ngIf="!customer" (click)="addCustomerRole()">
+                  <fa-icon [icon]="userIcon"></fa-icon>
+                  Devenez client
+                </button>
+                <button class="btn btn-outline-info btn-sm btn-block" *ngIf="!professional"
+                        (click)="showAddProfessionalRoleModal(addProfessionalRoleTemplate)">
+                  <fa-icon [icon]="professionalIcon"></fa-icon>
+                  Devenez prestataire
+                </button>
+              </div>
+              <div class="row" *ngIf="hasRole('Admin')">
+                <button class="btn btn-sm btn-block btn-outline-danger" (click)="generateUpcomingReservations()">
+                  Generate recurrent reservations
+                </button>
+              </div>
             </div>
           </div>
         </div>
