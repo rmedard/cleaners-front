@@ -36,6 +36,7 @@ import {Label, Recurrence} from '../../+models/recurrence';
 export class ProfilePageComponent implements OnInit {
 
   user: User = {} as User;
+  loggedInUser: LoggedInUser;
   customer: Customer;
   professional: Professional;
   alerts: Alert[] = [];
@@ -91,28 +92,32 @@ export class ProfilePageComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const loggedInUser = this.authService.getLoggedInUser();
-    this.user = loggedInUser.userAccount.user;
+    this.loggedInUser = this.authService.getLoggedInUser();
+    this.user = this.loggedInUser.userAccount.user;
     this.servicesService.getServices().subscribe(data => {
-      this.services = data as Service[];
+      if (this.authService.hasRole('Admin')) {
+        this.services = data as Service[];
+      } else {
+        this.services = (data as Service[]).filter(s => s.isActive);
+      }
     });
 
-    if (loggedInUser.userAccount.customerId > 0) {
-      this.customersService.getCustomer(loggedInUser.userAccount.customerId).subscribe(data => {
+    if (this.loggedInUser.userAccount.customerId > 0) {
+      this.customersService.getCustomer(this.loggedInUser.userAccount.customerId).subscribe(data => {
         this.customer = data as Customer;
         this.upcomingCustomerReservations = this.customer.reservations.filter(r => moment(r.startTime).isAfter(new Date()));
         this.pastCustomerReservations = this.customer.reservations.filter(r => moment(r.startTime).isBefore(new Date()));
       });
     }
 
-    if (loggedInUser.userAccount.professionalId > 0) {
-      this.professionalsService.getProfessional(loggedInUser.userAccount.professionalId).subscribe(data => {
+    if (this.loggedInUser.userAccount.professionalId > 0) {
+      this.professionalsService.getProfessional(this.loggedInUser.userAccount.professionalId).subscribe(data => {
         this.professional = data as Professional;
         this.expertiseForm = this.formBuilder.group({
           rate: [0.00, [Validators.pattern('^[0-9]+(\\.[0-9]{1,2})?$')]]
         });
 
-        if (this.user.roles.filter(r => r.role.roleName === 'Admin').length === 0) {
+        if (!this.authService.hasRole('Admin')) {
           this.reservationsService
             .searchReservation({professionalId: this.professional.id} as ReservationSearchCriteriaDto)
             .subscribe(res => {
@@ -123,15 +128,15 @@ export class ProfilePageComponent implements OnInit {
       });
     }
 
-    if (this.user.roles.filter(r => r.role.roleName === 'Admin').length > 0) {
+    if (this.authService.hasRole('Admin')) {
       this.reservationsService.getReservations().subscribe(data => {
         this.upcomingReservations = data.filter(r => moment(r.startTime).isAfter(new Date()));
         this.pastReservations = data.filter(r => moment(r.startTime).isBefore(new Date()));
-        if (loggedInUser.userAccount.professionalId > 0) {
+        if (this.loggedInUser.userAccount.professionalId > 0) {
           this.upcomingProfessionalReservations = this.upcomingReservations
-            .filter(r => r.expertise.professionalId === loggedInUser.userAccount.professionalId);
+            .filter(r => r.expertise.professionalId === this.loggedInUser.userAccount.professionalId);
           this.pastProfessionalReservations = this.pastReservations
-            .filter(r => r.expertise.professionalId === loggedInUser.userAccount.professionalId);
+            .filter(r => r.expertise.professionalId === this.loggedInUser.userAccount.professionalId);
         }
       });
       this.usersService.getUsers().subscribe(data => {
@@ -171,8 +176,8 @@ export class ProfilePageComponent implements OnInit {
     this.uploader.onSuccessItem = (item: any, response: string, status: number, headers: ParsedResponseHeaders) => {
       this.user.picture = JSON.parse(response).url;
       this.usersService.updateUser(this.user).subscribe(data => {
-        loggedInUser.userAccount.user = this.user;
-        localStorage.setItem('user', JSON.stringify(loggedInUser as LoggedInUser));
+        this.loggedInUser.userAccount.user = this.user;
+        localStorage.setItem('user', JSON.stringify(this.loggedInUser as LoggedInUser));
       });
     };
 
@@ -385,10 +390,6 @@ export class ProfilePageComponent implements OnInit {
     });
   }
 
-  addProfessionalRole(): void {
-    this.router.navigate(['/become-member']);
-  }
-
   confirmCancelReservation(modalTemplate: TemplateRef<any>, reservation: Reservation): void {
     this.reservationToUpdate = reservation;
     this.modalService.open(modalTemplate, {size: 'sm'});
@@ -457,38 +458,74 @@ export class ProfilePageComponent implements OnInit {
     }
   }
 
+  onAddProfessionalRole(): void {
+    const proposedExpertises = this.addedProposedExpertises.controls.map(c => {
+      return {
+        service: (c as FormGroup).controls.proposedService.value as Service,
+        hourlyRate: (c as FormGroup).controls.proposedHourlyRate.value,
+        isActive: true
+      } as Expertise;
+    });
+    const professional = {
+      expertises: proposedExpertises,
+      isActive: true,
+      user: this.user
+    } as Professional;
+    this.professionalsService.addProfessionalROle(this.user.userId, professional).subscribe(data => {
+      this.professional = data as Professional;
+      this.loggedInUser.userAccount.user.roles = this.professional.user.roles;
+      this.loggedInUser.userAccount.professionalId = this.professional.id;
+      this.user = this.loggedInUser.userAccount.user;
+      localStorage.setItem('user', JSON.stringify(this.loggedInUser as LoggedInUser));
+      this.alerts.push({
+        type: 'success',
+        msg: 'Granted professional role successfully.',
+        dismissible: true
+      } as Alert);
+    }, error => {
+      console.log(error);
+      this.alerts.push({
+        type: 'danger',
+        msg: 'Adding professional role failed.',
+        dismissible: true
+      } as Alert);
+    });
+    this.modalService.dismissAll();
+  }
+
   showAddProfessionalRoleModal(addProfessionalRoleTemplate: TemplateRef<any>): void {
-    this.servicesProposed = [];
-    this.servicesProposed.push(this.services[0]);
-    this.services = this.services.filter(s => !_.contains(this.servicesProposed, s));
     this.addedProposedExpertises = new FormArray([
       new FormGroup({
-        proposedService: new FormControl(this.servicesProposed[0]),
+        proposedService: new FormControl(this.services[0]),
         proposedHourlyRate: new FormControl(0.00, [Validators.required, Validators.min(1)])
       })
     ], [Validators.required]);
     this.addProfessionalRoleForm = this.formBuilder.group({
       proposedExpertises: this.addedProposedExpertises
     });
-    // this.modalService.open(addProfessionalRoleTemplate, {size: 'lg'});
+    this.servicesProposed = [];
+    this.servicesProposed.push(this.services[0]);
+    this.modalService.open(addProfessionalRoleTemplate, {size: 'lg'});
   }
 
   removeProposedService(i: number): void {
-    const grpToRemove = this.addedProposedExpertises.controls[i] as FormGroup;
-    this.servicesProposed.push(grpToRemove.controls.proposedService.value as Service);
     this.addedProposedExpertises.removeAt(i);
+    this.servicesProposed = this.addedProposedExpertises.controls.map(c => {
+      return (c as FormGroup).controls.proposedService.value as Service;
+    }) as Service[];
   }
 
   addProposedService(): void {
-    const addedServiceCtr = _.last(this.addedProposedExpertises.controls) as FormGroup;
-    const addedService = addedServiceCtr.controls.proposedService.value as Service;
-    this.servicesProposed.push(addedService);
-    console.log(this.servicesProposed);
-    this.services = this.services.filter(s => !_.contains(this.servicesProposed, s));
     this.addedProposedExpertises.insert(this.addedProposedExpertises.length, new FormGroup({
-      proposedService: new FormControl(this.servicesProposed[0]),
+      proposedService: new FormControl(this.services[this.servicesProposed.length]),
       proposedHourlyRate: new FormControl(0.00, [Validators.required, Validators.min(1)])
     }));
-    this.services = this.services.filter(s => !_.contains(this.servicesProposed, s));
+    this.servicesProposed = this.addedProposedExpertises.controls.map(c => {
+      return (c as FormGroup).controls.proposedService.value as Service;
+    }) as Service[];
+  }
+
+  isSelected(service: Service): boolean {
+    return _.contains(this.servicesProposed, service);
   }
 }

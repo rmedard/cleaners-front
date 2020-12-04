@@ -6,6 +6,7 @@ import {Observable} from 'rxjs';
 import {JwtHelperService} from '@auth0/angular-jwt';
 import {Router} from '@angular/router';
 import * as _ from 'underscore';
+import {tap} from 'rxjs/operators';
 
 const httpOptions = {
   headers: new HttpHeaders({'Content-Type': 'application/json'})
@@ -25,7 +26,11 @@ export class AuthService {
     const loginFormData = new FormData();
     loginFormData.append('Username', email);
     loginFormData.append('Password', password);
-    return this.http.post<LoggedInUser>(`${this.baseUrl}/auth/login`, loginFormData);
+    return this.http
+      .post<LoggedInUser>(`${this.baseUrl}/auth/login`, loginFormData)
+      .pipe(tap(response => {
+        localStorage.setItem('user', JSON.stringify(response as LoggedInUser));
+      }));
   }
 
   logout(): void {
@@ -56,7 +61,7 @@ export class AuthService {
     if (!this.loggedIn()) {
       return false;
     } else {
-      return _.contains(this.getLoggedInUser().userAccount.user.roles.map(r => r.role.roleName), roleName);
+      return _.contains(this.getLoggedInUser().userAccount.user.roles?.map(r => r.role.roleName), roleName);
     }
   }
 }

@@ -30,12 +30,13 @@
               <span class="badge badge-success mr-1"
                     *ngFor="let roleUser of user.roles">{{roleUser.role?.roleName}}</span>
             </div>
-            <div class="card-footer" *ngIf="!professional || !customer">
+            <div class="card-footer" *ngIf="!hasRole('Admin') && (!professional || !customer)">
               <button class="btn btn-outline-info btn-sm btn-block" *ngIf="!customer" (click)="addCustomerRole()">
                 <fa-icon [icon]="userIcon"></fa-icon>
                 Devenez client
               </button>
-              <button class="btn btn-outline-info btn-sm btn-block" *ngIf="!professional" (click)="showAddProfessionalRoleModal(addProfessionalRoleTemplate)">
+              <button class="btn btn-outline-info btn-sm btn-block" *ngIf="!professional"
+                      (click)="showAddProfessionalRoleModal(addProfessionalRoleTemplate)">
                 <fa-icon [icon]="professionalIcon"></fa-icon>
                 Devenez prestataire
               </button>
@@ -174,8 +175,8 @@
                 <fa-icon [icon]="euroIcon"></fa-icon>
               </td>
               <td>
-                <span
-                  class="badge badge-{{ reservation.status.valueOf() == 'Confirmed' ? 'success' : 'danger' }}">{{ reservation.status }}</span>
+                  <span
+                    class="badge badge-{{ reservation.status.valueOf() == 'Confirmed' ? 'success' : 'danger' }}">{{ reservation.status }}</span>
               </td>
               <td>
                 <button class="btn btn-outline-danger btn-sm"
@@ -245,7 +246,7 @@
                 <fa-icon [icon]="euroIcon"></fa-icon>
               </td>
               <td>
-                <span class="badge badge-light">{{ getRecurrenceName(reservation.recurrence.label) }}</span>
+                <span class="badge badge-light">{{ getRecurrenceName(reservation.recurrence) }}</span>
               </td>
               <td>
                 <span
@@ -343,7 +344,15 @@
                       <fa-icon [icon]="euroIcon"></fa-icon>
                     </td>
                   </tr>
-                  <tr><h4 class="text-center">Reservations effectuées</h4></tr>
+                  </tbody>
+                </table>
+                <table class="table table-hover" *ngIf="hasRole('Admin')">
+                  <thead class="thead-light">
+                  <tr>
+                    <th colspan="7" class="text-center">Reservations effectuées</th>
+                  </tr>
+                  </thead>
+                  <tbody>
                   <tr *ngFor="let order of pastReservations; let i = index" class="bg-danger-light">
                     <th scope="row">{{ i + 1 }}</th>
                     <td>{{ order.expertise.service.title }}</td>
@@ -376,7 +385,7 @@
                     <td>{{ user.email }}</td>
                     <td>{{ user.lastName }}, {{ user.firstName }}</td>
                     <td>
-                      <span *ngFor="let role of user.roles" class="badge badge-light">{{role.role.roleName}}</span>
+                      <span *ngFor="let role of user.roles" class="badge badge-dark mr-1">{{role.role.roleName}}</span>
                     </td>
                     <td>
                       <button class="btn btn-outline-{{user.isActive ? 'danger' : 'success'}} btn-sm"
@@ -461,21 +470,24 @@
     </ng-template>
 
     <ng-template #addProfessionalRoleTemplate let-addProfessionalRoleModal>
-        <form [formGroup]="addProfessionalRoleForm" (ngSubmit)="onAddExpertise()">
-          <div class="modal-header">
-            <h4 class="modal-title pull-left">Become a professional</h4>
-            <button type="button" class="close pull-right" aria-label="Close"
-                    (click)="addProfessionalRoleModal.dismiss('Cross click')">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <div class="modal-body">
-            <ng-container *ngFor="let proposedService of addedProposedExpertises.controls; let i=index">
-              <div class="form-row" [formGroup]="$any(proposedService)">
+      <form [formGroup]="addProfessionalRoleForm" (ngSubmit)="onAddProfessionalRole()">
+        <div class="modal-header">
+          <h4 class="modal-title pull-left">Become a professional</h4>
+          <button type="button" class="close pull-right" aria-label="Close"
+                  (click)="addProfessionalRoleModal.dismiss('Cross click')">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <ng-container *ngFor="let proposedService of addedProposedExpertises.controls; let i=index">
+            <div class="form-row" [formGroup]="$any(proposedService)">
               <div class="form-group col-md-8">
                 <label for="regService{{i}}">Service</label>
                 <select class="form-control" id="regService{{i}}" formControlName="proposedService">
-                  <option *ngFor="let service of services" [ngValue]="service">{{service.title}}</option>
+                  <option *ngFor="let service of services" [ngValue]="service"
+                          [disabled]="isSelected(service)">
+                    {{service.title}}
+                  </option>
                 </select>
               </div>
               <div class="form-group col-md-3">
@@ -496,22 +508,23 @@
                 </button>
               </div>
             </div>
-            </ng-container>
-            <div class="form-row">
-              <div class="col">
-                <button type="button" class="btn btn-success btn-sm" (click)="addProposedService()">
-                  <fa-icon [icon]="addIcon"></fa-icon> Add Service
-                </button>
-              </div>
+          </ng-container>
+          <div class="form-row">
+            <div class="col">
+              <button type="button" class="btn btn-success btn-sm" (click)="addProposedService()">
+                <fa-icon [icon]="addIcon"></fa-icon>
+                Add Service
+              </button>
             </div>
           </div>
-          <div class="modal-footer p-1">
-            <button type="submit" class="btn btn-primary" [disabled]="!addProfessionalRoleForm.valid">Ajouter</button>
-            <button type="button" class="btn btn-danger" (click)="addProfessionalRoleModal.dismiss('Cross click')">
-              Annuler
-            </button>
-          </div>
-        </form>
+        </div>
+        <div class="modal-footer p-1">
+          <button type="submit" class="btn btn-primary" [disabled]="!addProfessionalRoleForm.valid">Ajouter</button>
+          <button type="button" class="btn btn-danger" (click)="addProfessionalRoleModal.dismiss('Cross click')">
+            Annuler
+          </button>
+        </div>
+      </form>
     </ng-template>
 
     <ng-template #serviceTemplate let-serviceModal>

@@ -32,10 +32,11 @@ export class AuthPageComponent implements OnInit {
       const email = this.loginForm.controls.loginEmailField.value;
       const password = this.loginForm.controls.loginPasswordField.value;
       this.authService.login(email, password).subscribe(loggedInUser => {
-        localStorage.setItem('user', JSON.stringify(loggedInUser as LoggedInUser));
-        this.router.navigate(['/profile']).then(() => {
-          window.location.reload();
-        });
+        this.router.navigate(['/profile'])
+          .then(() => {
+            window.location.reload();
+          })
+        ;
       }, error => {
         this.alerts.push({
           type: 'danger',
