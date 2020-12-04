@@ -70,6 +70,16 @@ export class ProfilePageComponent implements OnInit {
   addableServices: Service[];
   addProfessionalRoleForm: FormGroup;
 
+  private static getDismissReason(reason: any): string {
+    if (reason === ModalDismissReasons.ESC) {
+      return 'by pressing ESC';
+    } else if (reason === ModalDismissReasons.BACKDROP_CLICK) {
+      return 'by clicking on a backdrop';
+    } else {
+      return `with: ${reason}`;
+    }
+  }
+
   constructor(private authService: AuthService,
               private professionalsService: ProfessionalsService,
               private servicesService: ServicesService,
@@ -232,23 +242,12 @@ export class ProfilePageComponent implements OnInit {
     this.modalService.open(template, {ariaLabelledBy: 'modal-basic-title'}).result.then((result) => {
       this.closeResult = `Closed with: ${result}`;
     }, (reason) => {
-      this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
+      this.closeResult = `Dismissed ${ProfilePageComponent.getDismissReason(reason)}`;
     });
   }
 
-  private getDismissReason(reason: any): string {
-    if (reason === ModalDismissReasons.ESC) {
-      return 'by pressing ESC';
-    } else if (reason === ModalDismissReasons.BACKDROP_CLICK) {
-      return 'by clicking on a backdrop';
-    } else {
-      return `with: ${reason}`;
-    }
-  }
-
   hasRole(roleName: string): boolean {
-    return this.user.roles.filter(r => r.role != null)
-      .map(r => r.role.roleName).filter(x => x === roleName).length > 0;
+    return this.authService.hasRole(roleName);
   }
 
   onSaveService(): void {

@@ -20,7 +20,7 @@ import {AuthService} from '../../../+services/auth.service';
 import {ReservationForCreate} from '../../../+models/dto/reservation-for-create';
 import {ReservationService} from '../../../+services/reservation.service';
 import {Alert} from '../../../+models/dto/alert';
-import {Label, Recurrence} from '../../../+models/recurrence';
+import {Recurrence} from '../../../+models/recurrence';
 
 @Component({
   selector: 'app-single-service',

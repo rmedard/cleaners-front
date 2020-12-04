@@ -5,6 +5,7 @@ import {LoggedInUser} from '../+models/dto/logged-in-user';
 import {Observable} from 'rxjs';
 import {JwtHelperService} from '@auth0/angular-jwt';
 import {Router} from '@angular/router';
+import * as _ from 'underscore';
 
 const httpOptions = {
   headers: new HttpHeaders({'Content-Type': 'application/json'})
@@ -49,5 +50,13 @@ export class AuthService {
       }
     }
     return loggedInUser;
+  }
+
+  hasRole(roleName: string): boolean {
+    if (!this.loggedIn()) {
+      return false;
+    } else {
+      return _.contains(this.getLoggedInUser().userAccount.user.roles.map(r => r.role.roleName), roleName);
+    }
   }
 }
