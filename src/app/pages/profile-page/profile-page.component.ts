@@ -614,4 +614,21 @@ export class ProfilePageComponent implements OnInit {
     // this.pdfMake.addTable(table);
     // this.pdfMake.open();
   }
+
+  generateCustomerBills(): void {
+    this.billingService.generateCustomerBills().subscribe(data => {
+      this.alerts.push({
+        type: 'success',
+        msg: 'Bills generated successfully.',
+        dismissible: true
+      } as Alert);
+    }, error => {
+      console.log(error);
+      this.alerts.push({
+        type: 'success',
+        msg: 'Bills generation failed.',
+        dismissible: true
+      } as Alert);
+    });
+  }
 }
