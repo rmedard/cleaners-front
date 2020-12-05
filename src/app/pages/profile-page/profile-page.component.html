@@ -290,7 +290,7 @@
                 <th>{{billing.date | date:'dd-MM-yyyy HH:mm'}}</th>
                 <th>{{billing.reservations.length}}</th>
                 <th>{{billing.totalPrice}} Euro</th>
-                <th><fa-icon [icon]="downloadIcon"></fa-icon></th>
+                <th><fa-icon [icon]="downloadIcon" (click)="generatePdf(billing)"></fa-icon></th>
               </tr>
             </tbody>
           </table>

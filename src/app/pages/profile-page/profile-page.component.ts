@@ -30,12 +30,10 @@ import {Expertise} from '../../+models/expertise';
 import {ReservationService} from '../../+services/reservation.service';
 import {RoleUser} from '../../+models/role-user';
 import {Role} from '../../+models/role';
-import {Router} from '@angular/router';
 import {ReservationSearchCriteriaDto} from '../../+models/dto/reservation-search-criteria-dto';
 import * as _ from 'underscore';
 import {AddExpertiseToProfessional} from '../../+models/dto/add-expertise-to-professional';
 import {Label, Recurrence} from '../../+models/recurrence';
-import {dateComparator} from '@ng-bootstrap/ng-bootstrap/datepicker/datepicker-tools';
 import {Billing} from '../../+models/billing';
 import {BillingService} from '../../+services/billing.service';
 
@@ -588,5 +586,32 @@ export class ProfilePageComponent implements OnInit {
         dismissible: true
       } as Alert);
     });
+  }
+
+  generatePdf(reservations: Billing): void {
+    // const header1 = new Cell('Service');
+    // const header2 = new Cell('Date');
+    // const header3 = new Cell('Nbr Of Hours');
+    // const header4 = new Cell('Hourly Rate');
+    // const header5 = new Cell('Price');
+    //
+    // const headersRow = new Row([header1, header2, header3, header4, header5]);
+    // const rows = [] as Row[];
+    // reservations.forEach(r => {
+    //   rows.push({
+    //     cells: [
+    //       {content: r.expertise.service.title} as Cell,
+    //       {content: moment(r.startTime).format('dd-MM-yyyy HH:mm')} as Cell,
+    //       {content: moment(r.endTime).diff(r.startTime, 'h').toString()} as Cell,
+    //       {content: r.expertise.hourlyRate.toString()} as Cell,
+    //       {content: r.totalCost.toString()} as Cell
+    //     ]
+    //   } as Row);
+    // });
+    //
+    // const widths = ['*', '*', '*', '*', '*'];
+    // const table = new Table(headersRow, rows, widths);
+    // this.pdfMake.addTable(table);
+    // this.pdfMake.open();
   }
 }

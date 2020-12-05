@@ -33,7 +33,6 @@ export class ReservationService {
   }
 
   searchReservation(searchDto: ReservationSearchCriteriaDto): Observable<Reservation[]> {
-    console.log(searchDto);
     return this.http.post<Reservation[]>(`${this.baseUrl}/Reservations/search`, searchDto, httpOptions);
   }
 
