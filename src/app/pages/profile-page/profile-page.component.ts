@@ -8,7 +8,15 @@ import {CustomersService} from '../../+services/customers.service';
 import {Alert} from '../../+models/dto/alert';
 import * as moment from 'moment';
 import {Reservation, Status} from '../../+models/reservation';
-import {faEuroSign, faMinus, faPlus, faPlusCircle, faUser, faUserTie} from '@fortawesome/free-solid-svg-icons';
+import {
+  faDownload,
+  faEuroSign,
+  faMinus,
+  faPlus,
+  faPlusCircle,
+  faUser,
+  faUserTie
+} from '@fortawesome/free-solid-svg-icons';
 import {FormArray, FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {ServicesService} from '../../+services/services.service';
 import {Category, Service} from '../../+models/service';
@@ -28,6 +36,8 @@ import * as _ from 'underscore';
 import {AddExpertiseToProfessional} from '../../+models/dto/add-expertise-to-professional';
 import {Label, Recurrence} from '../../+models/recurrence';
 import {dateComparator} from '@ng-bootstrap/ng-bootstrap/datepicker/datepicker-tools';
+import {Billing} from '../../+models/billing';
+import {BillingService} from '../../+services/billing.service';
 
 @Component({
   selector: 'app-profile-page',
@@ -69,9 +79,11 @@ export class ProfilePageComponent implements OnInit {
   private title = 'anyTitle';
   serviceForm: FormGroup;
   addIcon = faPlusCircle;
+  downloadIcon = faDownload;
   addableServices: Service[];
   addProfessionalRoleForm: FormGroup;
   selectedExpertiseForCancel: Expertise;
+  customerBillings: Billing[];
 
   private static getDismissReason(reason: any): string {
     if (reason === ModalDismissReasons.ESC) {
@@ -90,7 +102,8 @@ export class ProfilePageComponent implements OnInit {
               private customersService: CustomersService,
               private formBuilder: FormBuilder,
               private modalService: NgbModal,
-              private usersService: UsersService, private router: Router) {
+              private usersService: UsersService,
+              private billingService: BillingService) {
   }
 
   ngOnInit(): void {
@@ -109,6 +122,11 @@ export class ProfilePageComponent implements OnInit {
         this.customer = data as Customer;
         this.upcomingCustomerReservations = this.customer.reservations.filter(r => moment(r.startTime).isAfter(new Date()));
         this.pastCustomerReservations = this.customer.reservations.filter(r => moment(r.startTime).isBefore(new Date()));
+      });
+      this.billingService.getBills(this.loggedInUser.userAccount.customerId).subscribe(data => {
+        this.customerBillings = data as Billing[];
+      }, error => {
+        console.log(error);
       });
     }
 
