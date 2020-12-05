@@ -171,13 +171,14 @@
           <table class="table table-hover" *ngIf="professional">
             <thead class="thead-light">
             <tr>
-              <th colspan="7" class="text-center">Reservations effectuées</th>
+              <th colspan="8" class="text-center">Reservations effectuées</th>
             </tr>
             </thead>
             <tbody>
             <tr *ngFor="let reservation of pastProfessionalReservations; let i = index">
               <th scope="row">{{ i + 1 }}</th>
               <td>{{ reservation.expertise.service.title }}</td>
+              <td>{{ reservation.customer.user.lastName }}, {{ reservation.customer.user.firstName }}</td>
               <td>{{ reservation.startTime | date:'short' }}</td>
               <td>{{ getDuration(reservation) }} hours</td>
               <td>{{ reservation.totalCost | number: '1.2' }}
