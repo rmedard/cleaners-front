@@ -628,8 +628,6 @@ export class ProfilePageComponent implements OnInit {
         r.totalCost.toString()
       ]);
     });
-
-    const documentDefinition = {content: 'This is an sample PDF printed with pdfMake'};
     this.pdfService.loadPdfMaker().then((data) => {
       this.pdfService.pdfMake.createPdf(pdfDoc).open();
     });
