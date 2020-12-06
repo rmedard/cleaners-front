@@ -19,7 +19,7 @@ export class BillingService {
   }
 
   getBills(customerId?: number): Observable<Billing[]> {
-    const url = customerId ? `${this.baseUrl}/Billing?customerId=${customerId}` : `${this.baseUrl}/Customers`;
+    const url = customerId ? `${this.baseUrl}/Billing?customerId=${customerId}` : `${this.baseUrl}/Billing`;
     return this.http.get<Billing[]>(url, httpOptions);
   }
 

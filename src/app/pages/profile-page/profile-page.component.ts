@@ -36,6 +36,10 @@ import {AddExpertiseToProfessional} from '../../+models/dto/add-expertise-to-pro
 import {Label, Recurrence} from '../../+models/recurrence';
 import {Billing} from '../../+models/billing';
 import {BillingService} from '../../+services/billing.service';
+import {PdfService} from '../../+utils/pdf.service';
+import {Table} from '../../+utils/pdfDoc/table';
+import {TableLayout} from '../../+utils/pdfDoc/table-layout';
+import {DocContent} from '../../+utils/pdfDoc/doc-content';
 
 @Component({
   selector: 'app-profile-page',
@@ -82,6 +86,7 @@ export class ProfilePageComponent implements OnInit {
   addProfessionalRoleForm: FormGroup;
   selectedExpertiseForCancel: Expertise;
   customerBillings: Billing[];
+  allBillings: Billing[];
 
   private static getDismissReason(reason: any): string {
     if (reason === ModalDismissReasons.ESC) {
@@ -101,7 +106,7 @@ export class ProfilePageComponent implements OnInit {
               private formBuilder: FormBuilder,
               private modalService: NgbModal,
               private usersService: UsersService,
-              private billingService: BillingService) {
+              private billingService: BillingService, private pdfService: PdfService) {
   }
 
   ngOnInit(): void {
@@ -156,6 +161,11 @@ export class ProfilePageComponent implements OnInit {
           this.pastProfessionalReservations = this.pastReservations
             .filter(r => r.expertise.professionalId === this.loggedInUser.userAccount.professionalId);
         }
+      });
+      this.billingService.getBills().subscribe(data => {
+        this.allBillings = data as Billing[];
+      }, error => {
+        console.log(error);
       });
       this.usersService.getUsers().subscribe(data => {
         this.users = data;
@@ -588,31 +598,41 @@ export class ProfilePageComponent implements OnInit {
     });
   }
 
-  generatePdf(reservations: Billing): void {
-    // const header1 = new Cell('Service');
-    // const header2 = new Cell('Date');
-    // const header3 = new Cell('Nbr Of Hours');
-    // const header4 = new Cell('Hourly Rate');
-    // const header5 = new Cell('Price');
-    //
-    // const headersRow = new Row([header1, header2, header3, header4, header5]);
-    // const rows = [] as Row[];
-    // reservations.forEach(r => {
-    //   rows.push({
-    //     cells: [
-    //       {content: r.expertise.service.title} as Cell,
-    //       {content: moment(r.startTime).format('dd-MM-yyyy HH:mm')} as Cell,
-    //       {content: moment(r.endTime).diff(r.startTime, 'h').toString()} as Cell,
-    //       {content: r.expertise.hourlyRate.toString()} as Cell,
-    //       {content: r.totalCost.toString()} as Cell
-    //     ]
-    //   } as Row);
-    // });
-    //
-    // const widths = ['*', '*', '*', '*', '*'];
-    // const table = new Table(headersRow, rows, widths);
-    // this.pdfMake.addTable(table);
-    // this.pdfMake.open();
+  generatePdf(billing: Billing): void {
+    const pdfDoc = {
+      info: {
+        title: `Facture du client: ${billing.reservations[0].customer.user.lastName}`,
+        author: 'House Cleaners',
+        subject: 'Facturation'
+      },
+      header: [
+        {text: `Facture du client: ${billing.reservations[0].customer.user.lastName}`}
+      ],
+      content: [
+        {
+          layout: 'lightHorizontalLines',
+          table: {
+            headerRows: 1,
+            widths: [100, 100, '*', '*', '*'],
+            body: [['Service', 'Date', 'Nbr Of Hours', 'Hourly Rate', 'Price']]
+          } as Table
+        } as TableLayout
+      ]
+    } as DocContent;
+    billing.reservations.forEach(r => {
+      pdfDoc.content[0].table.body.push([
+        r.expertise.service.title,
+        moment(r.startTime).format('DD-MM-YYYY HH:mm'),
+        moment(r.endTime).diff(r.startTime, 'h').toString(),
+        r.expertise.hourlyRate.toString(),
+        r.totalCost.toString()
+      ]);
+    });
+
+    const documentDefinition = {content: 'This is an sample PDF printed with pdfMake'};
+    this.pdfService.loadPdfMaker().then((data) => {
+      this.pdfService.pdfMake.createPdf(pdfDoc).open();
+    });
   }
 
   generateCustomerBills(): void {

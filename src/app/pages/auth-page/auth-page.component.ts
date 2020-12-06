@@ -37,6 +37,7 @@ export class AuthPageComponent implements OnInit {
             window.location.reload();
           });
       }, error => {
+        console.log(error);
         this.alerts.push({
           type: 'danger',
           msg: 'Login failed. ' + (error as HttpErrorResponse).error,
