@@ -152,7 +152,7 @@
               <th scope="row">{{ i + 1 }}</th>
               <td>{{ reservation.expertise.service.title }}</td>
               <td>{{ reservation.customer.user.lastName }}, {{ reservation.customer.user.firstName }}</td>
-              <td>{{ reservation.startTime | date:'short' }}</td>
+              <td>{{ reservation.startTime | date:'dd-MM-yyyy HH:mm' }}</td>
               <td>{{ getDuration(reservation) }} hours</td>
               <td>{{ reservation.totalCost | number: '1.2' }}
                 <fa-icon [icon]="euroIcon"></fa-icon>
@@ -182,7 +182,7 @@
               <th scope="row">{{ i + 1 }}</th>
               <td>{{ reservation.expertise.service.title }}</td>
               <td>{{ reservation.customer.user.lastName }}, {{ reservation.customer.user.firstName }}</td>
-              <td>{{ reservation.startTime | date:'short' }}</td>
+              <td>{{ reservation.startTime | date:'dd-MM-yyyy HH:mm' }}</td>
               <td>{{ getDuration(reservation) }} hours</td>
               <td>{{ reservation.totalCost | number: '1.2' }}
                 <fa-icon [icon]="euroIcon"></fa-icon>
@@ -223,7 +223,7 @@
               <th scope="row">{{ i + 1 }}</th>
               <td>{{ reservation.expertise.service.title }}</td>
               <td>{{ reservation.expertise.professional.user.lastName }}, {{ reservation.expertise.professional.user.firstName }}</td>
-              <td>{{ reservation.startTime | date:'short' }}</td>
+              <td>{{ reservation.startTime | date:'dd-MM-yyyy HH:mm' }}</td>
               <td>{{ getDuration(reservation) }} hours</td>
               <td>{{ reservation.totalCost | number: '1.2' }}
                 <fa-icon [icon]="euroIcon"></fa-icon>
@@ -255,7 +255,7 @@
             <tr *ngFor="let reservation of pastCustomerReservations; let i = index">
               <th scope="row">{{ i + 1 }}</th>
               <td>{{ reservation.expertise.service.title }}</td>
-              <td>{{ reservation.startTime | date:'short' }}</td>
+              <td>{{ reservation.startTime | date:'dd-MM-yyyy HH:mm' }}</td>
               <td>{{ getDuration(reservation) }} hours</td>
               <td>{{ reservation.totalCost | number: '1.2' }}
                 <fa-icon [icon]="euroIcon"></fa-icon>

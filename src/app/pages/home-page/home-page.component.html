@@ -1,41 +1,41 @@
 <app-navigation-bar></app-navigation-bar>
 
-<!-- Heading Row -->
-<div class="row my-4">
-  <div class="col-lg-8">
-    <carousel>
-      <slide>
-        <img src="../../../assets/cleaner.jpg" alt="first slide" class="main-slider-img img-thumbnail rounded">
-        <div class="carousel-caption d-none d-md-block">
-          <h3>Professional cleaning</h3>
-          <p>Nulla vitae elit libero, a pharetra augue mollis interdum.</p>
-        </div>
-      </slide>
-      <slide>
-        <img src="../../../assets/constructor.jpg" alt="second slide" class="main-slider-img img-thumbnail rounded">
-        <div class="carousel-caption d-none d-md-block">
-          <h3>House keeping</h3>
-          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-        </div>
-      </slide>
-    </carousel>
+<div class="container">
+  <!-- Heading Row -->
+  <div class="row my-4">
+    <div class="col-lg-8">
+      <carousel>
+        <slide>
+          <img src="../../../assets/cleaner.jpg" alt="first slide" class="main-slider-img img-thumbnail rounded">
+          <div class="carousel-caption d-none d-md-block">
+            <h3>Professional cleaning</h3>
+            <p>Nulla vitae elit libero, a pharetra augue mollis interdum.</p>
+          </div>
+        </slide>
+        <slide>
+          <img src="../../../assets/constructor.jpg" alt="second slide" class="main-slider-img img-thumbnail rounded">
+          <div class="carousel-caption d-none d-md-block">
+            <h3>House keeping</h3>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+          </div>
+        </slide>
+      </carousel>
+    </div>
+    <!-- /.col-lg-8 -->
+    <div class="col-lg-4">
+      <h1>{{title}} Home Cleaners</h1>
+      <p>Home cleaners est une plateforme de gestion des clients, des prestataires de services, de rendez-vous et de la facturation en ligne</p>
+      <a class="btn btn-block btn-info" [routerLink]="['/services']">{{'our_services' | translate}}</a>
+    </div>
+    <!-- /.col-md-4 -->
   </div>
-  <!-- /.col-lg-8 -->
-  <div class="col-lg-4">
-    <h1>{{title}} Home Cleaners</h1>
-    <p>This is a template that is great for small businesses. It doesn't have too much fancy flare to it, but it makes a
-      great use of the standard Bootstrap core components. Feel free to use this template for any project you want!</p>
-    <a class="btn btn-primary btn-lg" href="#">Call to Action!</a>
-  </div>
-  <!-- /.col-md-4 -->
-</div>
-<!-- /.row -->
+  <!-- /.row -->
 
-<!-- Call to Action Well -->
-<div class="card text-white bg-secondary my-4 text-center">
-  <div class="card-body">
-    <p class="text-white m-0">This call to action card is a great place to showcase some important information or
-      display a clever tagline!</p>
+  <!-- Call to Action Well -->
+  <div class="card text-white bg-secondary my-4 text-center">
+    <div class="card-body">
+      <p class="text-white m-0">Quand on cherche un homme à tout faire ou une femme de ménage pour venir s'occuper de ses travaux à domicile, on se retrouve souvent confronté à des inquiétudes bien plus importantes que ce que l'on avait anticipé. Le prestaire sera-t-il compétent ? Est-il fiable ? Est-il digne de confiance ? C'est d'autant plus compliqué que ces travaux ne pourront être réalisés sans l'aide d'un vrai prestataire de services, mais qu'ils ne méritent tout de même pas de faire appel à une société spécialisée ! Pour remédier à ce problématique, nous avons mis en œuvre notre savoir-faire pour construire un cadre assurant confiance et sécurité et permettant de trouver un bricoleur ou une femme de ménage avec l'esprit tranquille.</p>
+    </div>
   </div>
 </div>
 
